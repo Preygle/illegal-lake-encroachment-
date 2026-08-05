@@ -1,0 +1,45 @@
+dataset_id,dataset,provider,provider_country,modality,theme,access_tier,res_m,year_start,year_end,cadence_days,cost,url,used_by
+S2,Sentinel-2 MSI L2A,ESA Copernicus,EU,Satellite,Optical imagery,open_api,10.0,2015,2026,5.0,Free,https://dataspace.copernicus.eu,lake;garbage;treefall
+LANDSAT,Landsat 5/7/8/9 Surface Reflectance,USGS/NASA,USA,Satellite,Optical imagery,open_download,30.0,1984,2026,16.0,Free,https://earthexplorer.usgs.gov,lake;heatwave
+S1,Sentinel-1 SAR GRD,ESA Copernicus,EU,Satellite,Radar / flood extent,open_api,10.0,2014,2026,6.0,Free,https://dataspace.copernicus.eu,sewer
+SRTM,NASA SRTM DEM,NASA JPL,USA,Satellite,Elevation,open_download,30.0,2000,2000,,Free,https://earthdata.nasa.gov,lake;sewer
+CARTODEM,CartoDEM v3,ISRO / NRSC,India,Satellite,Elevation,open_download,30.0,2011,2011,,Free (login),https://bhuvan.nrsc.gov.in,lake
+POWER,NASA POWER (MERRA-2 / GPM),NASA LaRC,USA,Satellite,Meteorology,open_api,55000.0,1981,2026,1.0,Free,https://power.larc.nasa.gov,lake;pothole;sewer;garbage;heatwave;oxygen;treefall;transformer;streetlight;bridge;school
+IMERG,GPM IMERG precipitation,NASA/JAXA,USA,Satellite,Precipitation,open_api,10000.0,2000,2026,0.02,Free,https://gpm.nasa.gov,lake;pothole;sewer
+GHSL,Global Human Settlement Layer,EC JRC,EU,Satellite,Built-up / urban,open_download,100.0,1975,2030,1825.0,Free,https://ghsl.jrc.ec.europa.eu,lake;sewer;garbage
+GUF,Global Urban Footprint,DLR,EU,Satellite,Built-up / urban,open_download,12.0,2011,2012,,Free (research),https://www.dlr.de,lake
+WORLDPOP,WorldPop gridded population,Univ. Southampton,UK,Satellite,Population,open_download,100.0,2000,2020,365.0,Free,https://www.worldpop.org,lake;garbage;heatwave
+MODIS,MODIS Land Cover / LST,NASA,USA,Satellite,Land cover / temperature,open_api,500.0,2000,2026,1.0,Free,https://lpdaac.usgs.gov,sewer;heatwave
+VIIRS,VIIRS Day-Night Band / Black Marble,NASA/NOAA,USA,Satellite,Night lights,open_api,500.0,2012,2026,1.0,Free,https://blackmarble.gsfc.nasa.gov,streetlight;heatwave
+PLANET,PlanetScope imagery,Planet Labs,USA,Satellite,Optical imagery,commercial,3.0,2016,2026,1.0,Paid / limited research quota,https://www.planet.com,garbage
+ASCAT,ASCAT soil moisture,EUMETSAT,EU,Satellite,Soil moisture,open_download,25000.0,2007,2026,1.0,Free,https://www.eumetsat.int,lake
+LIS_GLM,NASA LIS / GOES-GLM lightning,NASA/NOAA,USA,Satellite,Lightning,open_download,10000.0,1997,2026,1.0,Free,https://ghrc.nsstc.nasa.gov,streetlight;transformer
+BHUVAN,Bhuvan LULC & soil layers,ISRO / NRSC,India,Satellite,Land cover / soil,open_download,56.0,2005,2023,365.0,Free (login),https://bhuvan.nrsc.gov.in,lake;treefall;sewer
+GIBS,NASA GIBS worldview tiles,NASA EOSDIS,USA,Satellite,Optical imagery,open_api,250.0,2000,2026,1.0,Free,https://gibs.earthdata.nasa.gov,lake;heatwave
+OSM,OpenStreetMap (Overpass API),OSM Foundation,Global,Non-satellite,Vector geodata,open_api,,2004,2026,1.0,Free (ODbL),https://overpass-api.de,lake;pothole;sewer;garbage;treefall;streetlight;railxing;heatwave;bridge
+CENSUS,Census of India 2011,Registrar General of India,India,Non-satellite,Demographics,open_download,,2011,2011,,Free,https://censusindia.gov.in,lake;heatwave;oxygen;garbage;school
+BMC,Mumbai BMC CCRS complaints (~1.2M),Municipal Corp. of Greater Mumbai,India,Non-satellite,Civic complaints,scrape,,2015,2026,1.0,Free,https://portal.mcgm.gov.in,pothole;sewer;garbage
+PMC,Pune PMC civic complaints,Pune Municipal Corporation,India,Non-satellite,Civic complaints,scrape,,2017,2026,1.0,Free,https://www.pmc.gov.in,pothole;garbage;treefall
+DELHI311,Delhi / MCD grievance portal,Municipal Corp. of Delhi,India,Non-satellite,Civic complaints,scrape,,2016,2026,1.0,Free,https://mcdonline.nic.in,pothole;sewer
+CPCB_AQ,"CPCB air quality (AQI, PM2.5)",Central Pollution Control Board,India,Non-satellite,Air quality,open_api,,2015,2026,1.0,Free,https://app.cpcbccr.com,oxygen;bridge;heatwave
+CPCB_WQ,"CPCB / NWIC water quality (pH, DO)",CPCB / NWIC,India,Non-satellite,Water quality,open_download,,2012,2025,30.0,Free,https://nwic.gov.in,lake
+IMD,IMD rainfall & heatwave bulletins,India Meteorological Dept.,India,Non-satellite,Meteorology,open_download,25000.0,1901,2026,1.0,Free / paid archives,https://mausam.imd.gov.in,pothole;sewer;heatwave;lake;treefall
+UDISE,UDISE+ / AISHE school records,Ministry of Education,India,Non-satellite,Education infrastructure,restricted,,2012,2025,365.0,Free (aggregate only),https://udiseplus.gov.in,school
+MOHFW,MoHFW / covid19india case counts,Min. of Health & Family Welfare,India,Non-satellite,Public health,open_api,,2020,2023,1.0,Free,https://data.covid19india.org,oxygen
+IDSP,IDSP dengue / malaria surveillance,NCDC,India,Non-satellite,Public health,open_download,,2009,2026,7.0,Free,https://idsp.nic.in,oxygen
+NFHS,NFHS-5 health survey,IIPS / MoHFW,India,Non-satellite,Public health,open_download,,2019,2021,,Free,https://rchiips.org/nfhs,heatwave
+DATAGOVIN,data.gov.in open data catalogue,NIC / Govt. of India,India,Non-satellite,Open data portal,open_api,,2012,2026,1.0,Free,https://data.gov.in,lake;pothole;railxing;school;oxygen
+NWA,National Wetland Atlas,SAC / ISRO,India,Non-satellite,Waterbody register,open_download,,2011,2011,,Free,https://vedas.sac.gov.in,lake
+TREECEN,Delhi Tree Census 2015-16,Delhi Forest Dept.,India,Non-satellite,Tree inventory,foi_rti,,2015,2016,,Free on request,https://forest.delhi.gov.in,treefall
+ITREE,i-Tree species database,USDA Forest Service,USA,Non-satellite,Tree inventory,open_download,,2006,2026,,Free,https://www.itreetools.org,treefall
+IR_ACC,Indian Railways accident summaries,Ministry of Railways,India,Non-satellite,Accident records,open_download,,2010,2025,365.0,Free (aggregate PDF),https://indianrailways.gov.in,railxing
+LOKSABHA,Lok Sabha Q&A written answers,Parliament of India,India,Non-satellite,Accident records,scrape,,2004,2026,,Free,https://sansad.in,railxing
+PWD,State PWD / IRC bridge registers,State PWDs / IRC,India,Non-satellite,Asset inventory,foi_rti,,1990,2025,,On request,https://morth.nic.in,bridge
+GMAPS,Google Maps Traffic API,Google,USA,Non-satellite,Traffic,commercial,,2015,2026,0.01,Paid,https://developers.google.com/maps,pothole
+NOAA,NOAA Storm Events database,NOAA,USA,Non-satellite,Meteorology,open_download,,1950,2026,1.0,Free,https://www.ncdc.noaa.gov,transformer;bridge
+KAGGLE_DGA,Kaggle transformer DGA datasets,Kaggle community,Global,Non-satellite,Sensor / lab,open_download,,2018,2024,,Free,https://www.kaggle.com,transformer
+RTI,RTI / FOI requests,Various Indian agencies,India,Non-satellite,Administrative records,foi_rti,,2005,2026,,INR 10 per request,https://rtionline.gov.in,school;transformer;treefall;bridge;pothole
+NEWS,News / media scraping,Various outlets,Global,Non-satellite,Unstructured text,scrape,,2000,2026,1.0,Free / paywalled,https://news.google.com,treefall;garbage;bridge;lake
+TIMETBL,Indian Railways timetables,Ministry of Railways,India,Non-satellite,Transport schedules,scrape,,2010,2026,365.0,Free,https://indianrail.gov.in,railxing
+AADT,Highway AADT / DPR traffic counts,NHAI / State highway boards,India,Non-satellite,Traffic,restricted,,2010,2025,365.0,Free (scattered PDFs),https://nhai.gov.in,bridge;railxing
+OPENMETEO,Open-Meteo reanalysis archive,Open-Meteo,EU,Non-satellite,Meteorology,open_api,11000.0,1940,2026,1.0,Free (CC-BY),https://open-meteo.com,pothole;sewer;lake;heatwave

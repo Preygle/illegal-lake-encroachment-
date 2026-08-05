@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Predictive DA — EDA Dashboard</title>
+<style>
+:root{color-scheme:light dark}
+*{box-sizing:border-box}
+:root{
+  --surface-1:#fcfcfb; --page:#f9f9f7; --ink:#0b0b0b; --ink2:#52514e;
+  --muted:#898781; --grid:#e1e0d9; --baseline:#c3c2b7;
+  --border:rgba(11,11,11,.10); --shadow:rgba(11,11,11,.09);
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --veg:#008300; --good:#0ca30c; --critical:#d03b3b;
+  --hover:rgba(42,120,214,.08);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --surface-1:#1a1a19; --page:#0d0d0d; --ink:#fff; --ink2:#c3c2b7;
+    --muted:#898781; --grid:#2c2c2a; --baseline:#383835;
+    --border:rgba(255,255,255,.10); --shadow:rgba(0,0,0,.5);
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+    --veg:#008300; --hover:rgba(57,135,229,.14);
+  }
+}
+:root[data-theme="dark"]{
+  --surface-1:#1a1a19; --page:#0d0d0d; --ink:#fff; --ink2:#c3c2b7;
+  --muted:#898781; --grid:#2c2c2a; --baseline:#383835;
+  --border:rgba(255,255,255,.10); --shadow:rgba(0,0,0,.5);
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+  --veg:#008300; --hover:rgba(57,135,229,.14);
+}
+body{
+  margin:0;background:var(--page);color:var(--ink);
+  font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+.wrap{max-width:1340px;margin:0 auto;padding:0 22px 80px}
+
+/* header */
+header{
+  position:sticky;top:0;z-index:50;background:var(--page);
+  border-bottom:1px solid var(--border);padding:16px 0 0;
+  backdrop-filter:blur(8px);
+}
+.hrow{display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap}
+h1{font-size:1.32rem;margin:0;font-weight:650;letter-spacing:-.015em;flex:1 1 320px}
+h1 span{display:block;font-size:.8rem;font-weight:400;color:var(--muted);margin-top:2px}
+nav{display:flex;gap:2px;margin:12px 0 0;overflow-x:auto}
+nav a{
+  padding:8px 13px;font-size:.85rem;color:var(--ink2);text-decoration:none;
+  border-bottom:2px solid transparent;white-space:nowrap;font-weight:520;
+}
+nav a:hover{color:var(--ink);background:var(--hover)}
+nav a.on{color:var(--s1);border-bottom-color:var(--s1)}
+.tbtn{
+  background:var(--surface-1);border:1px solid var(--border);color:var(--ink2);
+  border-radius:8px;padding:7px 12px;font:inherit;font-size:.82rem;cursor:pointer;
+}
+.tbtn:hover{color:var(--ink);border-color:var(--baseline)}
+
+/* sections */
+section{padding-top:30px;scroll-margin-top:112px}
+h2{font-size:1.12rem;margin:0 0 3px;font-weight:640;letter-spacing:-.008em}
+.sub{font-size:.87rem;color:var(--muted);margin:0 0 18px;max-width:82ch}
+
+/* filter row */
+.filters{
+  display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;
+  padding:14px 16px;background:var(--surface-1);border:1px solid var(--border);
+  border-radius:11px;margin-bottom:18px;
+}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:.73rem;color:var(--muted);font-weight:600;letter-spacing:.02em;text-transform:uppercase}
+select,input[type=search]{
+  background:var(--page);border:1px solid var(--border);color:var(--ink);
+  border-radius:8px;padding:7px 10px;font:inherit;font-size:.86rem;min-width:158px;
+}
+select:focus,input:focus{outline:2px solid var(--s1);outline-offset:1px}
+.fspacer{flex:1}
+.reset{align-self:flex-end}
+
+/* tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:11px;margin-bottom:20px}
+.tile{background:var(--surface-1);border:1px solid var(--border);border-radius:11px;padding:14px 15px}
+.tv{font-size:1.6rem;font-weight:660;letter-spacing:-.02em;line-height:1.12}
+.tl{font-size:.79rem;color:var(--ink2);margin-top:2px;font-weight:550}
+.ts{font-size:.72rem;color:var(--muted)}
+
+/* cards */
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:12px;padding:18px 20px 16px;margin-bottom:16px}
+.card h3{font-size:.98rem;margin:0 0 2px;font-weight:620}
+.card .cs{font-size:.8rem;color:var(--muted);margin:0 0 14px;max-width:80ch}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.scrollx{overflow-x:auto}
+svg{display:block;max-width:100%;overflow:visible}
+.axis text{font-size:11px;fill:var(--ink2)}
+.axis line,.axis path{stroke:var(--baseline);stroke-width:1;fill:none}
+.gridline{stroke:var(--grid);stroke-width:1}
+.alab{font-size:11px;fill:var(--muted)}
+
+/* legend */
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 12px;font-size:.82rem;color:var(--ink2)}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:-1px}
+.legend .ln{width:15px;height:2.5px;border-radius:2px;display:inline-block;margin-right:6px;vertical-align:3px}
+
+/* tooltip */
+#tip{
+  position:fixed;pointer-events:none;z-index:200;opacity:0;transition:opacity .09s;
+  background:var(--surface-1);border:1px solid var(--border);border-radius:9px;
+  padding:9px 11px;font-size:.82rem;box-shadow:0 5px 18px var(--shadow);max-width:290px;
+}
+#tip .tt{font-weight:650;color:var(--ink);margin-bottom:5px;font-size:.85rem}
+#tip .tr{display:flex;justify-content:space-between;gap:16px;line-height:1.55}
+#tip .tk{color:var(--ink2);display:flex;align-items:center}
+#tip .tk i{width:13px;height:2.5px;border-radius:2px;display:inline-block;margin-right:7px}
+#tip .tv2{font-weight:640;color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* table */
+table{border-collapse:collapse;width:100%;font-size:.81rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);white-space:nowrap}
+th{position:sticky;top:0;background:var(--surface-1);font-weight:630;cursor:pointer;user-select:none;z-index:2}
+th:hover{color:var(--s1)}
+th.sorted::after{content:" ▲";font-size:.72em;color:var(--s1)}
+th.sorted.desc::after{content:" ▼"}
+td{color:var(--ink2)}
+tbody tr:hover td{background:var(--hover)}
+.tblbox{max-height:460px;overflow:auto;border:1px solid var(--border);border-radius:10px}
+.pill{display:inline-block;padding:1px 8px;border-radius:20px;font-size:.72rem;font-weight:600}
+.pill.sat{background:color-mix(in srgb,var(--s1) 17%,transparent);color:var(--s1)}
+.pill.non{background:color-mix(in srgb,var(--s2) 17%,transparent);color:var(--s2)}
+
+/* imagery */
+.imgrow{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:900px){.imgrow{grid-template-columns:1fr}}
+.imgbox img{width:100%;border-radius:9px;border:1px solid var(--border);display:block}
+.imgcap{font-size:.78rem;color:var(--muted);margin-top:6px}
+.slider{display:flex;align-items:center;gap:13px;margin:4px 0 15px}
+input[type=range]{flex:1;accent-color:var(--s1);height:22px}
+.yrbadge{font-weight:680;font-size:1.05rem;min-width:52px;font-variant-numeric:tabular-nums}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{
+  padding:5px 11px;border-radius:20px;border:1px solid var(--border);
+  background:var(--page);color:var(--ink2);font-size:.8rem;cursor:pointer;font-weight:540;
+}
+.chip:hover{border-color:var(--baseline);color:var(--ink)}
+.chip.on{background:var(--s1);border-color:var(--s1);color:#fff}
+.note{border-left:3px solid var(--s2);padding:11px 15px;background:var(--surface-1);
+  border-radius:0 9px 9px 0;font-size:.86rem;color:var(--ink2);margin:14px 0}
+.note b{color:var(--ink)}
+.empty{color:var(--muted);font-size:.85rem;padding:22px;text-align:center}
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--border);
+  font-size:.79rem;color:var(--muted)}
+footer a{color:var(--s1)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div id="tip" role="tooltip" aria-live="polite"></div>
+
+<header>
+  <div class="wrap">
+    <div class="hrow">
+      <h1>Exploratory Data Analysis — Predictive DA
+        <span id="hsub">Where the data comes from, and what it shows</span></h1>
+      <button class="tbtn" id="themeBtn" type="button">Theme</button>
+    </div>
+    <nav>
+      <a href="#sources" class="on">Sources</a>
+      <a href="#catalogue">Catalogue</a>
+      <a href="#lakes">Lakes (satellite)</a>
+      <a href="#imagery">Imagery</a>
+      <a href="#weather">Weather</a>
+      <a href="#health">Endpoints</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ============ SOURCES ============ -->
+<section id="sources">
+  <h2>Which project needs which data source</h2>
+  <p class="sub">44 catalogued sources across the 12 candidate projects. Use the filters to
+    scope every chart, tile and table below — click a project column in the matrix to isolate it.</p>
+
+  <div class="filters">
+    <div class="fg"><label for="fProject">Project</label>
+      <select id="fProject"><option value="">All 12 projects</option></select></div>
+    <div class="fg"><label for="fMod">Modality</label>
+      <select id="fMod"><option value="">Satellite + non-satellite</option>
+        <option>Satellite</option><option>Non-satellite</option></select></div>
+    <div class="fg"><label for="fAccess">Access</label>
+      <select id="fAccess"><option value="">Any access tier</option></select></div>
+    <div class="fg"><label for="fSearch">Search</label>
+      <input type="search" id="fSearch" placeholder="name, provider, theme…"></div>
+    <div class="fspacer"></div>
+    <button class="tbtn reset" id="resetBtn" type="button">Reset filters</button>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="card">
+    <h3>Project × source matrix</h3>
+    <p class="cs">Rows are sources ordered by how many projects need them. Hover any cell for
+      detail; click a project name to filter everything to that project.</p>
+    <div class="legend">
+      <span><i style="background:var(--s1)"></i>Satellite</span>
+      <span><i style="background:var(--s2)"></i>Non-satellite</span>
+    </div>
+    <div class="scrollx"><svg id="matrix"></svg></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Sources per project</h3>
+      <p class="cs">The integration cost behind each candidate project.</p>
+      <div class="scrollx"><svg id="perProject"></svg></div>
+    </div>
+    <div class="card">
+      <h3>How obtainable each source is</h3>
+      <p class="cs">Satellite data is almost entirely frictionless; the friction is in civic records.</p>
+      <div class="scrollx"><svg id="access"></svg></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CATALOGUE ============ -->
+<section id="catalogue">
+  <h2>Source catalogue</h2>
+  <p class="sub">Every dataset named in the research report. Click a column header to sort.
+    Respects the filters above.</p>
+  <div class="card" style="padding:14px">
+    <div class="tblbox"><table id="dsTable"><thead></thead><tbody></tbody></table></div>
+    <p class="cs" id="dsCount" style="margin:10px 0 0"></p>
+  </div>
+</section>
+
+<!-- ============ LAKES ============ -->
+<section id="lakes">
+  <h2>Lake state from Sentinel-2</h2>
+  <p class="sub">Seven cloud-free dry-season scenes, 2019–2025, over six Bengaluru lakes.
+    Pick a lake to see what is actually inside its reference footprint each year.</p>
+
+  <div class="chips" id="lakeChips" style="margin-bottom:14px"></div>
+  <div class="tiles" id="lakeTiles"></div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Footprint composition</h3>
+      <p class="cs">The fixed OSM footprint classified each year. Vegetation inside a lake bed is
+        hyacinth mat — not open water, and not the same as lake loss.</p>
+      <div class="legend">
+        <span><i style="background:var(--s1)"></i>Open water</span>
+        <span><i style="background:var(--veg)"></i>Vegetation</span>
+        <span><i style="background:var(--baseline)"></i>Bare / built</span>
+      </div>
+      <div class="scrollx"><svg id="composition"></svg></div>
+    </div>
+    <div class="card">
+      <h3>Open water over time</h3>
+      <p class="cs">The candidate label for the encroachment model.</p>
+      <div class="legend"><span><i class="ln" style="background:var(--s1)"></i>Open water (ha)</span></div>
+      <div class="scrollx"><svg id="waterSeries"></svg></div>
+    </div>
+  </div>
+
+  <div class="note" id="lakeNote"></div>
+</section>
+
+<!-- ============ IMAGERY ============ -->
+<section id="imagery">
+  <h2>Imagery, year by year</h2>
+  <p class="sub">The Bellandur–Varthur corridor. Drag the slider to step through the seven scenes;
+    true colour on the left, the MNDWI water index on the right.</p>
+  <div class="card">
+    <div class="slider">
+      <span class="yrbadge" id="yrBadge">2019</span>
+      <input type="range" id="yrRange" min="0" max="6" value="0" step="1"
+             aria-label="Scene year">
+      <span class="cs" id="yrDate" style="margin:0;min-width:170px;text-align:right"></span>
+    </div>
+    <div class="imgrow">
+      <div class="imgbox"><img id="imgRGB" alt="True-colour Sentinel-2 composite">
+        <p class="imgcap">True colour (B04/B03/B02), 2–98 percentile stretch</p></div>
+      <div class="imgbox"><img id="imgIDX" alt="MNDWI water index map">
+        <p class="imgcap">MNDWI — blue is open water, red is dry land and built-up</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WEATHER ============ -->
+<section id="weather">
+  <h2>Rainfall — the non-satellite driver</h2>
+  <p class="sub">NASA POWER daily rainfall, 2018–2025, for all eight study cities.
+    Pick a city to see its monsoon climatology.</p>
+  <div class="chips" id="cityChips" style="margin-bottom:14px"></div>
+  <div class="card">
+    <h3 id="cityTitle">Mean monthly rainfall</h3>
+    <p class="cs">Averaged over 2018–2025. The shaded band is the Jan–Apr dry window the
+      satellite scenes are drawn from.</p>
+    <div class="scrollx"><svg id="climate"></svg></div>
+  </div>
+</section>
+
+<!-- ============ HEALTH ============ -->
+<section id="health">
+  <h2>Endpoint reachability</h2>
+  <p class="sub">Every catalogued endpoint probed automatically at extraction time.</p>
+  <div class="card">
+    <div class="legend">
+      <span><i style="background:var(--good)"></i>Responded (HTTP 2xx/3xx)</span>
+      <span><i style="background:var(--critical)"></i>No response</span>
+    </div>
+    <div class="scrollx"><svg id="healthChart"></svg></div>
+  </div>
+</section>
+
+<footer>
+  <p>Built from <code>deep-research-report.md</code>. Sentinel-2 L2A via Earth Search STAC / AWS
+  Open Data · NASA POWER · NASA GIBS · OpenStreetMap (Overpass, ODbL). Every figure is computed
+  from data fetched live.</p>
+  <p>Full static report with all 25 figures: <a href="eda_report.html">eda_report.html</a></p>
+</footer>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+
+/* ---------------- helpers ---------------- */
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const SVGNS = "http://www.w3.org/2000/svg";
+const fmt = (n,d=0) => n==null||!isFinite(n) ? "—"
+  : n.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+function el(tag, attrs={}, parent=null){
+  const e = document.createElementNS(SVGNS, tag);
+  for(const k in attrs) e.setAttribute(k, attrs[k]);
+  if(parent) parent.appendChild(e);
+  return e;
+}
+function txt(tag, attrs, content, parent){
+  const e = el(tag, attrs, parent);
+  e.appendChild(document.createTextNode(content));   // labels are untrusted data
+  return e;
+}
+function clear(node){ while(node.firstChild) node.removeChild(node.firstChild); }
+
+/* ---------------- tooltip ---------------- */
+const tip = $("#tip");
+function showTip(evt, title, rows){
+  clear(tip);
+  const h = document.createElement("div");
+  h.className = "tt"; h.appendChild(document.createTextNode(title));
+  tip.appendChild(h);
+  for(const r of rows){
+    const d = document.createElement("div"); d.className = "tr";
+    const k = document.createElement("span"); k.className = "tk";
+    if(r.color){ const i=document.createElement("i"); i.style.background=r.color; k.appendChild(i); }
+    k.appendChild(document.createTextNode(r.k));
+    const v = document.createElement("span"); v.className = "tv2";
+    v.appendChild(document.createTextNode(r.v));
+    d.appendChild(k); d.appendChild(v); tip.appendChild(d);
+  }
+  tip.style.opacity = 1;
+  moveTip(evt);
+}
+function moveTip(evt){
+  const pad = 14, w = tip.offsetWidth, h = tip.offsetHeight;
+  let x = evt.clientX + pad, y = evt.clientY + pad;
+  if(x + w > innerWidth - 8)  x = evt.clientX - w - pad;
+  if(y + h > innerHeight - 8) y = evt.clientY - h - pad;
+  tip.style.left = Math.max(6,x)+"px"; tip.style.top = Math.max(6,y)+"px";
+}
+function hideTip(){ tip.style.opacity = 0; }
+document.addEventListener("scroll", hideTip, true);
+
+/* ---------------- theme ---------------- */
+function currentTheme(){
+  const set = document.documentElement.getAttribute("data-theme");
+  if(set) return set;
+  const mq = typeof matchMedia === "function" && matchMedia("(prefers-color-scheme: dark)");
+  return mq && mq.matches ? "dark" : "light";
+}
+$("#themeBtn").addEventListener("click", ()=>{
+  document.documentElement.setAttribute("data-theme",
+    currentTheme()==="dark" ? "light" : "dark");
+  renderAll();
+});
+
+/* ---------------- state ---------------- */
+const S = { project:"", modality:"", access:"", q:"",
+            lake:DATA.lakes[0], city:"Bengaluru", yearIdx:0,
+            sortKey:"n_proj", sortDesc:true };
+
+const ACCESS_LABEL = {open_api:"Open API", open_download:"Open download",
+  scrape:"Web scrape", foi_rti:"RTI / FOI request", restricted:"Restricted",
+  commercial:"Commercial / paid"};
+const ACCESS_ORDER = ["open_api","open_download","scrape","foi_rti","restricted","commercial"];
+
+function usedBy(d){ return DATA.edges.filter(e=>e.d===d.id).map(e=>e.p); }
+
+function filtered(){
+  const q = S.q.trim().toLowerCase();
+  return DATA.datasets.filter(d=>{
+    if(S.modality && d.modality!==S.modality) return false;
+    if(S.access   && d.access  !==S.access)   return false;
+    if(S.project  && !d.projects.includes(S.project)) return false;
+    if(q && !(d.name+" "+d.provider+" "+d.theme+" "+d.country).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+/* ================= TILES ================= */
+function renderTiles(){
+  const f = filtered();
+  const sat = f.filter(d=>d.modality==="Satellite").length;
+  const links = DATA.edges.filter(e=>f.some(d=>d.id===e.d) &&
+                                  (!S.project || e.p===S.project)).length;
+  const projs = new Set(f.flatMap(d=>d.projects)).size;
+  const free = f.filter(d=>d.access==="open_api"||d.access==="open_download").length;
+  const box = $("#tiles"); clear(box);
+  const tiles = [
+    [fmt(f.length), "Sources shown", S.project||S.modality||S.access||S.q ? "filtered" : "all catalogued"],
+    [sat+" / "+(f.length-sat), "Satellite / non-sat", "by modality"],
+    [fmt(links), "Usage links", "source → project"],
+    [fmt(projs), "Projects covered", "of 12"],
+    [fmt(free), "Frictionless", "open API or download"],
+    [fmt(DATA.meta.health_ok)+"/"+fmt(DATA.meta.health_n), "Endpoints live", "probed"],
+  ];
+  for(const [v,l,s] of tiles){
+    const d = document.createElement("div"); d.className="tile";
+    const a=document.createElement("div"); a.className="tv"; a.textContent=v;
+    const b=document.createElement("div"); b.className="tl"; b.textContent=l;
+    const c=document.createElement("div"); c.className="ts"; c.textContent=s;
+    d.append(a,b,c); box.appendChild(d);
+  }
+}
+
+/* ================= MATRIX ================= */
+function renderMatrix(){
+  const svg = $("#matrix"); clear(svg);
+  const rows = filtered().slice()
+    .sort((a,b)=> (a.modality===b.modality)
+        ? (b.n_proj-a.n_proj || a.name.localeCompare(b.name))
+        : (a.modality==="Satellite" ? -1 : 1));
+  const cols = DATA.projects.filter(p=>!S.project || p.key===S.project);
+  if(!rows.length){ svg.setAttribute("height",70);
+    txt("text",{x:16,y:38,class:"alab"},"No sources match these filters.",svg); return; }
+
+  const L=248, T=132, cw=Math.max(58, Math.min(96,(920-L)/Math.max(cols.length,1))),
+        rh=17, R=64;
+  const W = L+cols.length*cw+R, H = T+rows.length*rh+16;
+  svg.setAttribute("width",W); svg.setAttribute("height",H);
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+
+  const maxN = Math.max(...rows.map(r=>r.n_proj),1);
+  // column headers (clickable)
+  cols.forEach((p,j)=>{
+    const x = L+j*cw+cw/2;
+    const g = el("g",{transform:`translate(${x},${T-12}) rotate(-42)`,
+                      style:"cursor:pointer"},svg);
+    const t = txt("text",{x:0,y:0,"text-anchor":"start",class:"axis",
+                          fill: S.project===p.key?css("--s1"):css("--ink2"),
+                          "font-weight":S.project===p.key?"700":"500"},p.name,g);
+    g.addEventListener("click",()=>{ S.project = S.project===p.key?"":p.key;
+      $("#fProject").value=S.project; renderAll(); });
+    g.addEventListener("pointerenter",e=>showTip(e,p.name,[
+      {k:"Uniqueness",v:p.uniqueness+"/10"},
+      {k:"Labels",v:p.label_availability},
+      {k:"Difficulty",v:p.difficulty},
+      {k:"Feasible in 1 sem",v:p.feasible},
+      {k:"Sources needed",v:String(p.n_sources)}]));
+    g.addEventListener("pointermove",moveTip);
+    g.addEventListener("pointerleave",hideTip);
+    void t;
+  });
+
+  const satN = rows.filter(r=>r.modality==="Satellite").length;
+  if(satN && satN<rows.length)
+    el("line",{x1:L-236,x2:L+cols.length*cw,y1:T+satN*rh-rh/2,y2:T+satN*rh-rh/2,
+               stroke:css("--baseline"),"stroke-width":1.2},svg);
+
+  rows.forEach((d,i)=>{
+    const y = T+i*rh;
+    const rg = el("g",{},svg);
+    txt("text",{x:L-12,y:y+3.5,"text-anchor":"end",class:"axis",
+                "font-size":"10.5"}, d.name.length>34?d.name.slice(0,33)+"…":d.name, rg);
+    rg.addEventListener("pointerenter",e=>showTip(e,d.name,[
+      {k:"Provider",v:d.provider},{k:"Modality",v:d.modality,
+       color:d.modality==="Satellite"?css("--s1"):css("--s2")},
+      {k:"Access",v:ACCESS_LABEL[d.access]||d.access},
+      {k:"Resolution",v:d.res_m?fmt(d.res_m)+" m":"non-gridded"},
+      {k:"Coverage",v:d.y0+"–"+d.y1},
+      {k:"Used by",v:d.n_proj+" project"+(d.n_proj===1?"":"s")}]));
+    rg.addEventListener("pointermove",moveTip);
+    rg.addEventListener("pointerleave",hideTip);
+
+    const color = d.modality==="Satellite"?css("--s1"):css("--s2");
+    cols.forEach((p,j)=>{
+      if(!d.projects.includes(p.key)) return;
+      const c = el("rect",{x:L+j*cw+3, y:y-rh/2+2.2, width:cw-6, height:rh-4.4,
+                           rx:3, fill:color, style:"cursor:pointer"},svg);
+      c.addEventListener("pointerenter",e=>{ c.setAttribute("opacity",".72");
+        showTip(e,d.name,[{k:"Project",v:p.name},
+          {k:"Modality",v:d.modality,color},
+          {k:"Access",v:ACCESS_LABEL[d.access]||d.access},
+          {k:"Provider",v:d.provider}]); });
+      c.addEventListener("pointermove",moveTip);
+      c.addEventListener("pointerleave",()=>{ c.removeAttribute("opacity"); hideTip(); });
+    });
+    // row total
+    const bw = (R-22)*d.n_proj/maxN;
+    el("rect",{x:L+cols.length*cw+8,y:y-4.5,width:Math.max(bw,1.5),height:9,rx:2,
+               fill:color,opacity:.5},svg);
+    txt("text",{x:L+cols.length*cw+12+Math.max(bw,1.5),y:y+3.2,class:"alab",
+                "font-size":"10"},String(d.n_proj),svg);
+  });
+  txt("text",{x:L+cols.length*cw+8,y:T-16,class:"alab","font-size":"10"},"projects",svg);
+}
+
+/* ================= BAR: sources per project ================= */
+function renderPerProject(){
+  const svg=$("#perProject"); clear(svg);
+  const f = filtered();
+  const rows = DATA.projects.map(p=>{
+    const ds = f.filter(d=>d.projects.includes(p.key));
+    return {name:p.name, key:p.key,
+            sat:ds.filter(d=>d.modality==="Satellite").length,
+            non:ds.filter(d=>d.modality!=="Satellite").length};
+  }).filter(r=>r.sat+r.non>0).sort((a,b)=>(b.sat+b.non)-(a.sat+a.non));
+  if(!rows.length){ svg.setAttribute("height",60);
+    txt("text",{x:14,y:34,class:"alab"},"Nothing to show.",svg); return; }
+
+  const L=182,R=44,T=10,B=32,rh=25, W=620, H=T+rows.length*rh+B;
+  svg.setAttribute("width",W); svg.setAttribute("height",H); svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const max=Math.max(...rows.map(r=>r.sat+r.non)), x=v=>v/max*(W-L-R);
+  for(let t=0;t<=max;t+=Math.ceil(max/5)){
+    el("line",{x1:L+x(t),x2:L+x(t),y1:T,y2:T+rows.length*rh,class:"gridline"},svg);
+    txt("text",{x:L+x(t),y:H-14,"text-anchor":"middle",class:"alab"},String(t),svg);
+  }
+  rows.forEach((r,i)=>{
+    const y=T+i*rh+3, h=rh-11;
+    txt("text",{x:L-11,y:y+h/2+3.5,"text-anchor":"end",class:"axis","font-size":"11"},
+        r.name.length>26?r.name.slice(0,25)+"…":r.name, svg);
+    const segs=[["Satellite",r.sat,css("--s1")],["Non-satellite",r.non,css("--s2")]];
+    let acc=0;
+    segs.forEach(([lab,v,c])=>{
+      if(!v) return;
+      const bx=L+x(acc), bw=x(v)-2;
+      const rect=el("rect",{x:bx,y,width:Math.max(bw,2),height:h,rx:3,fill:c,
+                            style:"cursor:pointer"},svg);
+      rect.addEventListener("pointerenter",e=>{rect.setAttribute("opacity",".75");
+        showTip(e,r.name,[{k:"Satellite",v:String(r.sat),color:css("--s1")},
+                          {k:"Non-satellite",v:String(r.non),color:css("--s2")},
+                          {k:"Total",v:String(r.sat+r.non)}]);});
+      rect.addEventListener("pointermove",moveTip);
+      rect.addEventListener("pointerleave",()=>{rect.removeAttribute("opacity");hideTip();});
+      if(bw>17) txt("text",{x:bx+bw/2,y:y+h/2+3.8,"text-anchor":"middle",
+                    "font-size":"10.5",fill:"#fff","font-weight":"650"},String(v),svg);
+      acc+=v; void lab;
+    });
+    txt("text",{x:L+x(acc)+7,y:y+h/2+3.8,class:"axis","font-size":"11",
+                "font-weight":"640"},String(acc),svg);
+  });
+}
+
+/* ================= BAR: access tiers ================= */
+function renderAccess(){
+  const svg=$("#access"); clear(svg);
+  const f=filtered();
+  const rows=ACCESS_ORDER.map(a=>({a,
+    sat:f.filter(d=>d.access===a&&d.modality==="Satellite").length,
+    non:f.filter(d=>d.access===a&&d.modality!=="Satellite").length}))
+    .filter(r=>r.sat+r.non>0);
+  if(!rows.length){ svg.setAttribute("height",60);
+    txt("text",{x:14,y:34,class:"alab"},"Nothing to show.",svg); return; }
+  const L=152,R=46,T=10,B=30,rh=30,W=620,H=T+rows.length*rh+B;
+  svg.setAttribute("width",W); svg.setAttribute("height",H); svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const max=Math.max(...rows.map(r=>Math.max(r.sat,r.non))), x=v=>v/max*(W-L-R);
+  rows.forEach((r,i)=>{
+    const y=T+i*rh;
+    txt("text",{x:L-11,y:y+rh/2+3.5,"text-anchor":"end",class:"axis","font-size":"11"},
+        ACCESS_LABEL[r.a], svg);
+    [["Satellite",r.sat,css("--s1"),0],["Non-satellite",r.non,css("--s2"),1]]
+      .forEach(([lab,v,c,k])=>{
+        if(!v) return;
+        const bh=9, by=y+rh/2-bh-1.5+k*(bh+3);
+        const rect=el("rect",{x:L,y:by,width:Math.max(x(v),2),height:bh,rx:2.5,fill:c,
+                              style:"cursor:pointer"},svg);
+        rect.addEventListener("pointerenter",e=>{rect.setAttribute("opacity",".75");
+          showTip(e,ACCESS_LABEL[r.a],[{k:lab,v:String(v),color:c}]);});
+        rect.addEventListener("pointermove",moveTip);
+        rect.addEventListener("pointerleave",()=>{rect.removeAttribute("opacity");hideTip();});
+        txt("text",{x:L+Math.max(x(v),2)+6,y:by+bh-0.5,class:"alab","font-size":"10"},
+            String(v),svg);
+      });
+  });
+}
+
+/* ================= CATALOGUE TABLE ================= */
+const COLS=[["name","Dataset"],["provider","Provider"],["modality","Modality"],
+  ["theme","Theme"],["access","Access"],["res_m","Res (m)"],["y0","From"],["y1","To"],
+  ["n_proj","Projects"],["cost","Cost"]];
+function renderTable(){
+  const thead=$("#dsTable thead"), tbody=$("#dsTable tbody");
+  clear(thead); clear(tbody);
+  const tr=document.createElement("tr");
+  for(const [k,label] of COLS){
+    const th=document.createElement("th");
+    th.textContent=label;
+    if(S.sortKey===k){ th.className="sorted"+(S.sortDesc?" desc":""); }
+    th.addEventListener("click",()=>{
+      if(S.sortKey===k) S.sortDesc=!S.sortDesc; else {S.sortKey=k;S.sortDesc=true;}
+      renderTable();
+    });
+    tr.appendChild(th);
+  }
+  thead.appendChild(tr);
+
+  const rows=filtered().slice().sort((a,b)=>{
+    const x=a[S.sortKey], y=b[S.sortKey];
+    if(x==null) return 1; if(y==null) return -1;
+    const c = typeof x==="number" ? x-y : String(x).localeCompare(String(y));
+    return S.sortDesc ? -c : c;
+  });
+  for(const d of rows){
+    const r=document.createElement("tr");
+    for(const [k] of COLS){
+      const td=document.createElement("td");
+      if(k==="modality"){
+        const s=document.createElement("span");
+        s.className="pill "+(d.modality==="Satellite"?"sat":"non");
+        s.textContent=d.modality; td.appendChild(s);
+      } else if(k==="access"){ td.textContent=ACCESS_LABEL[d.access]||d.access;
+      } else if(k==="res_m"){ td.textContent=d.res_m?fmt(d.res_m):"—";
+      } else td.textContent=d[k]==null?"—":String(d[k]);
+      r.appendChild(td);
+    }
+    tbody.appendChild(r);
+  }
+  $("#dsCount").textContent=`${rows.length} of ${DATA.datasets.length} sources shown`;
+}
+
+/* ================= LAKES ================= */
+function lakeRows(){ return DATA.lakeArea.filter(r=>r.lake===S.lake)
+                          .sort((a,b)=>a.year-b.year); }
+
+function renderLakeChips(){
+  const box=$("#lakeChips"); clear(box);
+  for(const l of DATA.lakes){
+    const b=document.createElement("button");
+    b.className="chip"+(l===S.lake?" on":""); b.type="button"; b.textContent=l;
+    b.addEventListener("click",()=>{S.lake=l;renderLakes();});
+    box.appendChild(b);
+  }
+}
+function renderLakeTiles(){
+  const rows=lakeRows(), box=$("#lakeTiles"); clear(box);
+  if(!rows.length) return;
+  const a=rows[0], z=rows[rows.length-1];
+  const meta=DATA.lakeMeta[S.lake]||{};
+  const tiles=[
+    [fmt(z.ref_ha)+" ha","Reference footprint","OSM multipolygon"],
+    [fmt(z.water_ha,1)+" ha","Open water "+z.year, (z.water_ha>=a.water_ha?"+":"")+fmt(z.water_ha-a.water_ha,1)+" ha vs "+a.year],
+    [fmt(z.veg_ha,1)+" ha","Vegetation "+z.year,"hyacinth / reclaimed bed"],
+    [fmt(100*z.water_frac,0)+"%","Water share "+z.year,fmt(100*a.water_frac,0)+"% in "+a.year],
+    [fmt(meta.bldg_per_ha_250m,1),"Buildings / ha","within 250 m of shore"],
+    [fmt(meta.road_km_500m,0)+" km","Road length","within 500 m"],
+  ];
+  for(const [v,l,s] of tiles){
+    const d=document.createElement("div"); d.className="tile";
+    const x=document.createElement("div"); x.className="tv"; x.textContent=v;
+    const y=document.createElement("div"); y.className="tl"; y.textContent=l;
+    const w=document.createElement("div"); w.className="ts"; w.textContent=s;
+    d.append(x,y,w); box.appendChild(d);
+  }
+}
+function renderComposition(){
+  const svg=$("#composition"); clear(svg);
+  const rows=lakeRows(); if(!rows.length) return;
+  const L=54,R=14,T=12,B=40,W=560,H=290;
+  svg.setAttribute("width",W); svg.setAttribute("height",H); svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const max=Math.max(...rows.map(r=>r.ref_ha));
+  const y=v=>T+(1-v/max)*(H-T-B), bw=(W-L-R)/rows.length;
+  for(let i=0;i<=4;i++){
+    const v=max*i/4;
+    el("line",{x1:L,x2:W-R,y1:y(v),y2:y(v),class:"gridline"},svg);
+    txt("text",{x:L-8,y:y(v)+3.5,"text-anchor":"end",class:"alab"},fmt(v),svg);
+  }
+  txt("text",{x:L-40,y:T-1,class:"alab","font-size":"10"},"ha",svg);
+  rows.forEach((r,i)=>{
+    const bx=L+i*bw+bw*0.16, w=bw*0.68;
+    let acc=0;
+    [["Open water",r.water_ha,css("--s1")],["Vegetation",r.veg_ha,css("--veg")],
+     ["Bare / built",r.other_ha,css("--baseline")]].forEach(([lab,v,c])=>{
+      if(v<=0) return;
+      const top=y(acc+v), bot=y(acc);
+      const rect=el("rect",{x:bx,y:top,width:w,height:Math.max(bot-top-1.5,1),rx:2,
+                            fill:c,style:"cursor:pointer"},svg);
+      rect.addEventListener("pointerenter",e=>{rect.setAttribute("opacity",".75");
+        showTip(e,S.lake+" · "+r.year,[
+          {k:"Open water",v:fmt(r.water_ha,1)+" ha",color:css("--s1")},
+          {k:"Vegetation",v:fmt(r.veg_ha,1)+" ha",color:css("--veg")},
+          {k:"Bare / built",v:fmt(r.other_ha,1)+" ha",color:css("--baseline")},
+          {k:"Footprint",v:fmt(r.ref_ha,1)+" ha"}]);});
+      rect.addEventListener("pointermove",moveTip);
+      rect.addEventListener("pointerleave",()=>{rect.removeAttribute("opacity");hideTip();});
+      acc+=v; void lab;
+    });
+    txt("text",{x:bx+w/2,y:H-B+17,"text-anchor":"middle",class:"axis","font-size":"10.5"},
+        String(r.year),svg);
+  });
+}
+function renderWaterSeries(){
+  const svg=$("#waterSeries"); clear(svg);
+  const rows=lakeRows(); if(!rows.length) return;
+  const L=54,R=18,T=12,B=40,W=560,H=290;
+  svg.setAttribute("width",W); svg.setAttribute("height",H); svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const max=Math.max(...rows.map(r=>r.water_ha))*1.18||1;
+  const x=i=>L+(rows.length===1?0.5:i/(rows.length-1))*(W-L-R), y=v=>T+(1-v/max)*(H-T-B);
+  for(let i=0;i<=4;i++){
+    const v=max*i/4;
+    el("line",{x1:L,x2:W-R,y1:y(v),y2:y(v),class:"gridline"},svg);
+    txt("text",{x:L-8,y:y(v)+3.5,"text-anchor":"end",class:"alab"},fmt(v,1),svg);
+  }
+  txt("text",{x:L-40,y:T-1,class:"alab","font-size":"10"},"ha",svg);
+  const pts=rows.map((r,i)=>[x(i),y(r.water_ha)]);
+  el("path",{d:"M"+pts.map(p=>p.join(",")).join("L")+`L${pts[pts.length-1][0]},${y(0)}L${pts[0][0]},${y(0)}Z`,
+             fill:css("--s1"),opacity:.15},svg);
+  el("path",{d:"M"+pts.map(p=>p.join(",")).join("L"),fill:"none",
+             stroke:css("--s1"),"stroke-width":2.4,"stroke-linejoin":"round"},svg);
+  const hair=el("line",{y1:T,y2:H-B,stroke:css("--baseline"),"stroke-width":1,
+                        opacity:0,"stroke-dasharray":"3 3"},svg);
+  rows.forEach((r,i)=>{
+    el("circle",{cx:x(i),cy:y(r.water_ha),r:4.6,fill:css("--s1"),
+                 stroke:css("--surface-1"),"stroke-width":1.8},svg);
+    txt("text",{x:x(i),y:H-B+17,"text-anchor":"middle",class:"axis","font-size":"10.5"},
+        String(r.year),svg);
+    txt("text",{x:x(i),y:y(r.water_ha)-11,"text-anchor":"middle",class:"alab",
+                "font-size":"10"},fmt(r.water_ha,1),svg);
+    const hit=el("rect",{x:x(i)-(W-L-R)/(2*Math.max(rows.length-1,1)),y:T,
+                         width:(W-L-R)/Math.max(rows.length-1,1),height:H-T-B,
+                         fill:"transparent",style:"cursor:crosshair"},svg);
+    hit.addEventListener("pointerenter",e=>{
+      hair.setAttribute("x1",x(i)); hair.setAttribute("x2",x(i)); hair.setAttribute("opacity",1);
+      showTip(e,S.lake+" · "+r.year,[
+        {k:"Open water",v:fmt(r.water_ha,1)+" ha",color:css("--s1")},
+        {k:"Vegetation",v:fmt(r.veg_ha,1)+" ha",color:css("--veg")},
+        {k:"Mean MNDWI",v:fmt(r.mean_mndwi,3)},
+        {k:"Rain, prior 365 d",v:fmt(r.rain_365d)+" mm"},
+        {k:"Scene",v:r.scene_date||"—"}]);});
+    hit.addEventListener("pointermove",moveTip);
+    hit.addEventListener("pointerleave",()=>{hair.setAttribute("opacity",0);hideTip();});
+  });
+}
+function renderLakeNote(){
+  const rows=lakeRows(), n=$("#lakeNote"); clear(n);
+  if(!rows.length) return;
+  const a=rows[0], z=rows[rows.length-1];
+  const minR=rows.reduce((m,r)=>r.water_ha<m.water_ha?r:m,rows[0]);
+  const b=document.createElement("b");
+  b.textContent=S.lake+": ";
+  n.appendChild(b);
+  n.appendChild(document.createTextNode(
+    `open water goes ${fmt(a.water_ha,1)} ha in ${a.year} to ${fmt(z.water_ha,1)} ha in ${z.year}, `+
+    `bottoming at ${fmt(minR.water_ha,1)} ha in ${minR.year}. `+
+    `Vegetation inside the footprint is ${fmt(z.veg_ha,1)} ha in ${z.year} `+
+    `(${fmt(100*z.veg_ha/z.ref_ha,0)}% of the bed) — that is hyacinth mat, not land. `+
+    `A label reading "area fell, therefore encroachment" would fire on ${minR.year}; `+
+    `the water returning by ${z.year} says otherwise.`));
+}
+function renderLakes(){ renderLakeChips(); renderLakeTiles();
+  renderComposition(); renderWaterSeries(); renderLakeNote(); }
+
+/* ================= IMAGERY ================= */
+function renderImagery(){
+  const sc=DATA.scenes[S.yearIdx]; if(!sc) return;
+  $("#yrBadge").textContent=sc.year;
+  $("#yrDate").textContent=sc.date+"  ·  cloud "+sc.cloud+"%";
+  $("#imgRGB").src=DATA.images.rgb[S.yearIdx];
+  $("#imgIDX").src=DATA.images.mndwi[S.yearIdx];
+}
+$("#yrRange").addEventListener("input",e=>{S.yearIdx=+e.target.value;renderImagery();});
+
+/* ================= WEATHER ================= */
+function renderCityChips(){
+  const box=$("#cityChips"); clear(box);
+  for(const c of DATA.cities){
+    const b=document.createElement("button");
+    b.className="chip"+(c===S.city?" on":""); b.type="button"; b.textContent=c;
+    b.addEventListener("click",()=>{S.city=c;renderWeather();});
+    box.appendChild(b);
+  }
+}
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function renderClimate(){
+  const svg=$("#climate"); clear(svg);
+  const v=DATA.climatology[S.city]; if(!v) return;
+  const L=56,R=20,T=16,B=40,W=1120,H=320;
+  svg.setAttribute("width",W); svg.setAttribute("height",H); svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const max=Math.max(...Object.values(DATA.climatology).flat())*1.08;
+  const x=i=>L+i/11*(W-L-R), y=m=>T+(1-m/max)*(H-T-B);
+  el("rect",{x:L,y:T,width:x(3)-L,height:H-T-B,fill:css("--s3"),opacity:.10},svg);
+  txt("text",{x:(L+x(3))/2,y:T+15,"text-anchor":"middle",class:"alab","font-size":"10.5",
+              fill:css("--s3")},"Jan–Apr dry window",svg);
+  for(let i=0;i<=4;i++){
+    const m=max*i/4;
+    el("line",{x1:L,x2:W-R,y1:y(m),y2:y(m),class:"gridline"},svg);
+    txt("text",{x:L-9,y:y(m)+3.5,"text-anchor":"end",class:"alab"},fmt(m),svg);
+  }
+  txt("text",{x:L-46,y:T+2,class:"alab","font-size":"10"},"mm",svg);
+  const pts=v.map((m,i)=>[x(i),y(m)]);
+  el("path",{d:"M"+pts.map(p=>p.join(",")).join("L")+`L${x(11)},${y(0)}L${L},${y(0)}Z`,
+             fill:css("--s1"),opacity:.16},svg);
+  el("path",{d:"M"+pts.map(p=>p.join(",")).join("L"),fill:"none",stroke:css("--s1"),
+             "stroke-width":2.4,"stroke-linejoin":"round"},svg);
+  const hair=el("line",{y1:T,y2:H-B,stroke:css("--baseline"),"stroke-width":1,opacity:0,
+                        "stroke-dasharray":"3 3"},svg);
+  v.forEach((m,i)=>{
+    el("circle",{cx:x(i),cy:y(m),r:4.4,fill:css("--s1"),stroke:css("--surface-1"),
+                 "stroke-width":1.8},svg);
+    txt("text",{x:x(i),y:H-B+18,"text-anchor":"middle",class:"axis","font-size":"11"},
+        MON[i],svg);
+    const hit=el("rect",{x:x(i)-(W-L-R)/22,y:T,width:(W-L-R)/11,height:H-T-B,
+                         fill:"transparent",style:"cursor:crosshair"},svg);
+    hit.addEventListener("pointerenter",e=>{
+      hair.setAttribute("x1",x(i));hair.setAttribute("x2",x(i));hair.setAttribute("opacity",1);
+      showTip(e,S.city+" · "+MON[i],[
+        {k:"Mean rainfall",v:fmt(m)+" mm",color:css("--s1")},
+        {k:"Share of year",v:fmt(100*m/v.reduce((s,q)=>s+q,0),1)+"%"}]);});
+    hit.addEventListener("pointermove",moveTip);
+    hit.addEventListener("pointerleave",()=>{hair.setAttribute("opacity",0);hideTip();});
+  });
+  const tot=v.reduce((s,q)=>s+q,0);
+  $("#cityTitle").textContent=`${S.city} — ${fmt(tot)} mm per year`;
+}
+function renderWeather(){ renderCityChips(); renderClimate(); }
+
+/* ================= HEALTH ================= */
+function renderHealth(){
+  const svg=$("#healthChart"); clear(svg);
+  const rows=DATA.health.slice().sort((a,b)=>(b.ok-a.ok)||(a.latency-b.latency));
+  const L=210,R=190,T=8,B=32,rh=25,W=900,H=T+rows.length*rh+B;
+  svg.setAttribute("width",W); svg.setAttribute("height",H); svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const max=Math.max(...rows.map(r=>r.latency),1), x=v=>v/max*(W-L-R);
+  rows.forEach((r,i)=>{
+    const y=T+i*rh, h=rh-11, c=r.ok?css("--good"):css("--critical");
+    txt("text",{x:L-11,y:y+h/2+7,"text-anchor":"end",class:"axis","font-size":"11"},
+        r.name.length>30?r.name.slice(0,29)+"…":r.name, svg);
+    const rect=el("rect",{x:L,y:y+3,width:Math.max(x(r.latency),2),height:h,rx:3,fill:c,
+                          style:"cursor:pointer"},svg);
+    rect.addEventListener("pointerenter",e=>{rect.setAttribute("opacity",".75");
+      showTip(e,r.name,[{k:"Status",v:r.ok?("HTTP "+r.status):"unreachable",color:c},
+                        {k:"Latency",v:fmt(r.latency,2)+" s"},{k:"Endpoint",v:r.url}]);});
+    rect.addEventListener("pointermove",moveTip);
+    rect.addEventListener("pointerleave",()=>{rect.removeAttribute("opacity");hideTip();});
+    txt("text",{x:L+Math.max(x(r.latency),2)+8,y:y+h/2+7.5,class:"axis","font-size":"10.5",
+                fill:r.ok?css("--ink2"):css("--critical")},
+        r.ok?(fmt(r.latency,2)+" s · HTTP "+r.status):"unreachable (TLS / timeout)", svg);
+  });
+}
+
+/* ================= WIRING ================= */
+function renderAll(){
+  renderTiles(); renderMatrix(); renderPerProject(); renderAccess();
+  renderTable(); renderLakes(); renderImagery(); renderWeather(); renderHealth();
+}
+function initControls(){
+  const ps=$("#fProject");
+  for(const p of DATA.projects){
+    const o=document.createElement("option"); o.value=p.key; o.textContent=p.name;
+    ps.appendChild(o);
+  }
+  const as=$("#fAccess");
+  for(const a of ACCESS_ORDER){
+    if(!DATA.datasets.some(d=>d.access===a)) continue;
+    const o=document.createElement("option"); o.value=a; o.textContent=ACCESS_LABEL[a];
+    as.appendChild(o);
+  }
+  ps.addEventListener("change",e=>{S.project=e.target.value;renderAll();});
+  $("#fMod").addEventListener("change",e=>{S.modality=e.target.value;renderAll();});
+  as.addEventListener("change",e=>{S.access=e.target.value;renderAll();});
+  let t; $("#fSearch").addEventListener("input",e=>{
+    clearTimeout(t); t=setTimeout(()=>{S.q=e.target.value;renderAll();},130);});
+  $("#resetBtn").addEventListener("click",()=>{
+    S.project=S.modality=S.access=S.q="";
+    ps.value=""; $("#fMod").value=""; as.value=""; $("#fSearch").value="";
+    renderAll();});
+  $("#yrRange").max=DATA.scenes.length-1;
+
+  const secs=$$("section"), links=$$("nav a");
+  addEventListener("scroll",()=>{
+    let cur=secs[0].id;
+    for(const s of secs) if(s.getBoundingClientRect().top<=140) cur=s.id;
+    links.forEach(a=>a.classList.toggle("on",a.getAttribute("href")==="#"+cur));
+  },{passive:true});
+  addEventListener("resize",()=>{renderMatrix();renderPerProject();renderAccess();
+    renderComposition();renderWaterSeries();renderClimate();renderHealth();});
+}
+initControls();
+renderAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+dataset,Bridge Corrosion Risk,Hospital Oxygen Demand,Illegal Garbage Dump,Illegal Lake Encroachment,Pothole Formation,Rail Crossing Accident Risk,School Infrastructure Failure,Sewer Blockage / Drain Choke,Streetlight Failure,Transformer Failure,Urban Heatwave Mortality Risk,Urban Tree Fall
+ASCAT soil moisture,0,0,0,1,0,0,0,0,0,0,0,0
+Bhuvan LULC & soil layers,0,0,0,1,0,0,0,1,0,0,0,1
+"CPCB / NWIC water quality (pH, DO)",0,0,0,1,0,0,0,0,0,0,0,0
+"CPCB air quality (AQI, PM2.5)",1,1,0,0,0,0,0,0,0,0,1,0
+CartoDEM v3,0,0,0,1,0,0,0,0,0,0,0,0
+Census of India 2011,0,1,1,1,0,0,1,0,0,0,1,0
+Delhi / MCD grievance portal,0,0,0,0,1,0,0,1,0,0,0,0
+Delhi Tree Census 2015-16,0,0,0,0,0,0,0,0,0,0,0,1
+GPM IMERG precipitation,0,0,0,1,1,0,0,1,0,0,0,0
+Global Human Settlement Layer,0,0,1,1,0,0,0,1,0,0,0,0
+Global Urban Footprint,0,0,0,1,0,0,0,0,0,0,0,0
+Google Maps Traffic API,0,0,0,0,1,0,0,0,0,0,0,0
+Highway AADT / DPR traffic counts,1,0,0,0,0,1,0,0,0,0,0,0
+IDSP dengue / malaria surveillance,0,1,0,0,0,0,0,0,0,0,0,0
+IMD rainfall & heatwave bulletins,0,0,0,1,1,0,0,1,0,0,1,1
+Indian Railways accident summaries,0,0,0,0,0,1,0,0,0,0,0,0
+Indian Railways timetables,0,0,0,0,0,1,0,0,0,0,0,0
+Kaggle transformer DGA datasets,0,0,0,0,0,0,0,0,0,1,0,0
+Landsat 5/7/8/9 Surface Reflectance,0,0,0,1,0,0,0,0,0,0,1,0
+Lok Sabha Q&A written answers,0,0,0,0,0,1,0,0,0,0,0,0
+MODIS Land Cover / LST,0,0,0,0,0,0,0,1,0,0,1,0
+MoHFW / covid19india case counts,0,1,0,0,0,0,0,0,0,0,0,0
+Mumbai BMC CCRS complaints (~1.2M),0,0,1,0,1,0,0,1,0,0,0,0
+NASA GIBS worldview tiles,0,0,0,1,0,0,0,0,0,0,1,0
+NASA LIS / GOES-GLM lightning,0,0,0,0,0,0,0,0,1,1,0,0
+NASA POWER (MERRA-2 / GPM),1,1,1,1,1,0,1,1,1,1,1,1
+NASA SRTM DEM,0,0,0,1,0,0,0,1,0,0,0,0
+NFHS-5 health survey,0,0,0,0,0,0,0,0,0,0,1,0
+NOAA Storm Events database,1,0,0,0,0,0,0,0,0,1,0,0
+National Wetland Atlas,0,0,0,1,0,0,0,0,0,0,0,0
+News / media scraping,1,0,1,1,0,0,0,0,0,0,0,1
+Open-Meteo reanalysis archive,0,0,0,1,1,0,0,1,0,0,1,0
+OpenStreetMap (Overpass API),1,0,1,1,1,1,0,1,1,0,1,1
+PlanetScope imagery,0,0,1,0,0,0,0,0,0,0,0,0
+Pune PMC civic complaints,0,0,1,0,1,0,0,0,0,0,0,1
+RTI / FOI requests,1,0,0,0,1,0,1,0,0,1,0,1
+Sentinel-1 SAR GRD,0,0,0,0,0,0,0,1,0,0,0,0
+Sentinel-2 MSI L2A,0,0,1,1,0,0,0,0,0,0,0,1
+State PWD / IRC bridge registers,1,0,0,0,0,0,0,0,0,0,0,0
+UDISE+ / AISHE school records,0,0,0,0,0,0,1,0,0,0,0,0
+VIIRS Day-Night Band / Black Marble,0,0,0,0,0,0,0,0,1,0,1,0
+WorldPop gridded population,0,0,1,1,0,0,0,0,0,0,1,0
+data.gov.in open data catalogue,0,1,0,1,1,1,1,0,0,0,0,0
+i-Tree species database,0,0,0,0,0,0,0,0,0,0,0,1

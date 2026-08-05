@@ -1,0 +1,110 @@
+dataset_id,dataset,provider,modality,theme,access_tier,project_key,project
+S2,Sentinel-2 MSI L2A,ESA Copernicus,Satellite,Optical imagery,open_api,lake,Illegal Lake Encroachment
+S2,Sentinel-2 MSI L2A,ESA Copernicus,Satellite,Optical imagery,open_api,garbage,Illegal Garbage Dump
+S2,Sentinel-2 MSI L2A,ESA Copernicus,Satellite,Optical imagery,open_api,treefall,Urban Tree Fall
+LANDSAT,Landsat 5/7/8/9 Surface Reflectance,USGS/NASA,Satellite,Optical imagery,open_download,lake,Illegal Lake Encroachment
+LANDSAT,Landsat 5/7/8/9 Surface Reflectance,USGS/NASA,Satellite,Optical imagery,open_download,heatwave,Urban Heatwave Mortality Risk
+S1,Sentinel-1 SAR GRD,ESA Copernicus,Satellite,Radar / flood extent,open_api,sewer,Sewer Blockage / Drain Choke
+SRTM,NASA SRTM DEM,NASA JPL,Satellite,Elevation,open_download,lake,Illegal Lake Encroachment
+SRTM,NASA SRTM DEM,NASA JPL,Satellite,Elevation,open_download,sewer,Sewer Blockage / Drain Choke
+CARTODEM,CartoDEM v3,ISRO / NRSC,Satellite,Elevation,open_download,lake,Illegal Lake Encroachment
+POWER,NASA POWER (MERRA-2 / GPM),NASA LaRC,Satellite,Meteorology,open_api,lake,Illegal Lake Encroachment
+POWER,NASA POWER (MERRA-2 / GPM),NASA LaRC,Satellite,Meteorology,open_api,pothole,Pothole Formation
+POWER,NASA POWER (MERRA-2 / GPM),NASA LaRC,Satellite,Meteorology,open_api,sewer,Sewer Blockage / Drain Choke
+POWER,NASA POWER (MERRA-2 / GPM),NASA LaRC,Satellite,Meteorology,open_api,garbage,Illegal Garbage Dump
+POWER,NASA POWER (MERRA-2 / GPM),NASA LaRC,Satellite,Meteorology,open_api,heatwave,Urban Heatwave Mortality Risk
+POWER,NASA POWER (MERRA-2 / GPM),NASA LaRC,Satellite,Meteorology,open_api,oxygen,Hospital Oxygen Demand
+POWER,NASA POWER (MERRA-2 / GPM),NASA LaRC,Satellite,Meteorology,open_api,treefall,Urban Tree Fall
+POWER,NASA POWER (MERRA-2 / GPM),NASA LaRC,Satellite,Meteorology,open_api,transformer,Transformer Failure
+POWER,NASA POWER (MERRA-2 / GPM),NASA LaRC,Satellite,Meteorology,open_api,streetlight,Streetlight Failure
+POWER,NASA POWER (MERRA-2 / GPM),NASA LaRC,Satellite,Meteorology,open_api,bridge,Bridge Corrosion Risk
+POWER,NASA POWER (MERRA-2 / GPM),NASA LaRC,Satellite,Meteorology,open_api,school,School Infrastructure Failure
+IMERG,GPM IMERG precipitation,NASA/JAXA,Satellite,Precipitation,open_api,lake,Illegal Lake Encroachment
+IMERG,GPM IMERG precipitation,NASA/JAXA,Satellite,Precipitation,open_api,pothole,Pothole Formation
+IMERG,GPM IMERG precipitation,NASA/JAXA,Satellite,Precipitation,open_api,sewer,Sewer Blockage / Drain Choke
+GHSL,Global Human Settlement Layer,EC JRC,Satellite,Built-up / urban,open_download,lake,Illegal Lake Encroachment
+GHSL,Global Human Settlement Layer,EC JRC,Satellite,Built-up / urban,open_download,sewer,Sewer Blockage / Drain Choke
+GHSL,Global Human Settlement Layer,EC JRC,Satellite,Built-up / urban,open_download,garbage,Illegal Garbage Dump
+GUF,Global Urban Footprint,DLR,Satellite,Built-up / urban,open_download,lake,Illegal Lake Encroachment
+WORLDPOP,WorldPop gridded population,Univ. Southampton,Satellite,Population,open_download,lake,Illegal Lake Encroachment
+WORLDPOP,WorldPop gridded population,Univ. Southampton,Satellite,Population,open_download,garbage,Illegal Garbage Dump
+WORLDPOP,WorldPop gridded population,Univ. Southampton,Satellite,Population,open_download,heatwave,Urban Heatwave Mortality Risk
+MODIS,MODIS Land Cover / LST,NASA,Satellite,Land cover / temperature,open_api,sewer,Sewer Blockage / Drain Choke
+MODIS,MODIS Land Cover / LST,NASA,Satellite,Land cover / temperature,open_api,heatwave,Urban Heatwave Mortality Risk
+VIIRS,VIIRS Day-Night Band / Black Marble,NASA/NOAA,Satellite,Night lights,open_api,streetlight,Streetlight Failure
+VIIRS,VIIRS Day-Night Band / Black Marble,NASA/NOAA,Satellite,Night lights,open_api,heatwave,Urban Heatwave Mortality Risk
+PLANET,PlanetScope imagery,Planet Labs,Satellite,Optical imagery,commercial,garbage,Illegal Garbage Dump
+ASCAT,ASCAT soil moisture,EUMETSAT,Satellite,Soil moisture,open_download,lake,Illegal Lake Encroachment
+LIS_GLM,NASA LIS / GOES-GLM lightning,NASA/NOAA,Satellite,Lightning,open_download,streetlight,Streetlight Failure
+LIS_GLM,NASA LIS / GOES-GLM lightning,NASA/NOAA,Satellite,Lightning,open_download,transformer,Transformer Failure
+BHUVAN,Bhuvan LULC & soil layers,ISRO / NRSC,Satellite,Land cover / soil,open_download,lake,Illegal Lake Encroachment
+BHUVAN,Bhuvan LULC & soil layers,ISRO / NRSC,Satellite,Land cover / soil,open_download,treefall,Urban Tree Fall
+BHUVAN,Bhuvan LULC & soil layers,ISRO / NRSC,Satellite,Land cover / soil,open_download,sewer,Sewer Blockage / Drain Choke
+GIBS,NASA GIBS worldview tiles,NASA EOSDIS,Satellite,Optical imagery,open_api,lake,Illegal Lake Encroachment
+GIBS,NASA GIBS worldview tiles,NASA EOSDIS,Satellite,Optical imagery,open_api,heatwave,Urban Heatwave Mortality Risk
+OSM,OpenStreetMap (Overpass API),OSM Foundation,Non-satellite,Vector geodata,open_api,lake,Illegal Lake Encroachment
+OSM,OpenStreetMap (Overpass API),OSM Foundation,Non-satellite,Vector geodata,open_api,pothole,Pothole Formation
+OSM,OpenStreetMap (Overpass API),OSM Foundation,Non-satellite,Vector geodata,open_api,sewer,Sewer Blockage / Drain Choke
+OSM,OpenStreetMap (Overpass API),OSM Foundation,Non-satellite,Vector geodata,open_api,garbage,Illegal Garbage Dump
+OSM,OpenStreetMap (Overpass API),OSM Foundation,Non-satellite,Vector geodata,open_api,treefall,Urban Tree Fall
+OSM,OpenStreetMap (Overpass API),OSM Foundation,Non-satellite,Vector geodata,open_api,streetlight,Streetlight Failure
+OSM,OpenStreetMap (Overpass API),OSM Foundation,Non-satellite,Vector geodata,open_api,railxing,Rail Crossing Accident Risk
+OSM,OpenStreetMap (Overpass API),OSM Foundation,Non-satellite,Vector geodata,open_api,heatwave,Urban Heatwave Mortality Risk
+OSM,OpenStreetMap (Overpass API),OSM Foundation,Non-satellite,Vector geodata,open_api,bridge,Bridge Corrosion Risk
+CENSUS,Census of India 2011,Registrar General of India,Non-satellite,Demographics,open_download,lake,Illegal Lake Encroachment
+CENSUS,Census of India 2011,Registrar General of India,Non-satellite,Demographics,open_download,heatwave,Urban Heatwave Mortality Risk
+CENSUS,Census of India 2011,Registrar General of India,Non-satellite,Demographics,open_download,oxygen,Hospital Oxygen Demand
+CENSUS,Census of India 2011,Registrar General of India,Non-satellite,Demographics,open_download,garbage,Illegal Garbage Dump
+CENSUS,Census of India 2011,Registrar General of India,Non-satellite,Demographics,open_download,school,School Infrastructure Failure
+BMC,Mumbai BMC CCRS complaints (~1.2M),Municipal Corp. of Greater Mumbai,Non-satellite,Civic complaints,scrape,pothole,Pothole Formation
+BMC,Mumbai BMC CCRS complaints (~1.2M),Municipal Corp. of Greater Mumbai,Non-satellite,Civic complaints,scrape,sewer,Sewer Blockage / Drain Choke
+BMC,Mumbai BMC CCRS complaints (~1.2M),Municipal Corp. of Greater Mumbai,Non-satellite,Civic complaints,scrape,garbage,Illegal Garbage Dump
+PMC,Pune PMC civic complaints,Pune Municipal Corporation,Non-satellite,Civic complaints,scrape,pothole,Pothole Formation
+PMC,Pune PMC civic complaints,Pune Municipal Corporation,Non-satellite,Civic complaints,scrape,garbage,Illegal Garbage Dump
+PMC,Pune PMC civic complaints,Pune Municipal Corporation,Non-satellite,Civic complaints,scrape,treefall,Urban Tree Fall
+DELHI311,Delhi / MCD grievance portal,Municipal Corp. of Delhi,Non-satellite,Civic complaints,scrape,pothole,Pothole Formation
+DELHI311,Delhi / MCD grievance portal,Municipal Corp. of Delhi,Non-satellite,Civic complaints,scrape,sewer,Sewer Blockage / Drain Choke
+CPCB_AQ,"CPCB air quality (AQI, PM2.5)",Central Pollution Control Board,Non-satellite,Air quality,open_api,oxygen,Hospital Oxygen Demand
+CPCB_AQ,"CPCB air quality (AQI, PM2.5)",Central Pollution Control Board,Non-satellite,Air quality,open_api,bridge,Bridge Corrosion Risk
+CPCB_AQ,"CPCB air quality (AQI, PM2.5)",Central Pollution Control Board,Non-satellite,Air quality,open_api,heatwave,Urban Heatwave Mortality Risk
+CPCB_WQ,"CPCB / NWIC water quality (pH, DO)",CPCB / NWIC,Non-satellite,Water quality,open_download,lake,Illegal Lake Encroachment
+IMD,IMD rainfall & heatwave bulletins,India Meteorological Dept.,Non-satellite,Meteorology,open_download,pothole,Pothole Formation
+IMD,IMD rainfall & heatwave bulletins,India Meteorological Dept.,Non-satellite,Meteorology,open_download,sewer,Sewer Blockage / Drain Choke
+IMD,IMD rainfall & heatwave bulletins,India Meteorological Dept.,Non-satellite,Meteorology,open_download,heatwave,Urban Heatwave Mortality Risk
+IMD,IMD rainfall & heatwave bulletins,India Meteorological Dept.,Non-satellite,Meteorology,open_download,lake,Illegal Lake Encroachment
+IMD,IMD rainfall & heatwave bulletins,India Meteorological Dept.,Non-satellite,Meteorology,open_download,treefall,Urban Tree Fall
+UDISE,UDISE+ / AISHE school records,Ministry of Education,Non-satellite,Education infrastructure,restricted,school,School Infrastructure Failure
+MOHFW,MoHFW / covid19india case counts,Min. of Health & Family Welfare,Non-satellite,Public health,open_api,oxygen,Hospital Oxygen Demand
+IDSP,IDSP dengue / malaria surveillance,NCDC,Non-satellite,Public health,open_download,oxygen,Hospital Oxygen Demand
+NFHS,NFHS-5 health survey,IIPS / MoHFW,Non-satellite,Public health,open_download,heatwave,Urban Heatwave Mortality Risk
+DATAGOVIN,data.gov.in open data catalogue,NIC / Govt. of India,Non-satellite,Open data portal,open_api,lake,Illegal Lake Encroachment
+DATAGOVIN,data.gov.in open data catalogue,NIC / Govt. of India,Non-satellite,Open data portal,open_api,pothole,Pothole Formation
+DATAGOVIN,data.gov.in open data catalogue,NIC / Govt. of India,Non-satellite,Open data portal,open_api,railxing,Rail Crossing Accident Risk
+DATAGOVIN,data.gov.in open data catalogue,NIC / Govt. of India,Non-satellite,Open data portal,open_api,school,School Infrastructure Failure
+DATAGOVIN,data.gov.in open data catalogue,NIC / Govt. of India,Non-satellite,Open data portal,open_api,oxygen,Hospital Oxygen Demand
+NWA,National Wetland Atlas,SAC / ISRO,Non-satellite,Waterbody register,open_download,lake,Illegal Lake Encroachment
+TREECEN,Delhi Tree Census 2015-16,Delhi Forest Dept.,Non-satellite,Tree inventory,foi_rti,treefall,Urban Tree Fall
+ITREE,i-Tree species database,USDA Forest Service,Non-satellite,Tree inventory,open_download,treefall,Urban Tree Fall
+IR_ACC,Indian Railways accident summaries,Ministry of Railways,Non-satellite,Accident records,open_download,railxing,Rail Crossing Accident Risk
+LOKSABHA,Lok Sabha Q&A written answers,Parliament of India,Non-satellite,Accident records,scrape,railxing,Rail Crossing Accident Risk
+PWD,State PWD / IRC bridge registers,State PWDs / IRC,Non-satellite,Asset inventory,foi_rti,bridge,Bridge Corrosion Risk
+GMAPS,Google Maps Traffic API,Google,Non-satellite,Traffic,commercial,pothole,Pothole Formation
+NOAA,NOAA Storm Events database,NOAA,Non-satellite,Meteorology,open_download,transformer,Transformer Failure
+NOAA,NOAA Storm Events database,NOAA,Non-satellite,Meteorology,open_download,bridge,Bridge Corrosion Risk
+KAGGLE_DGA,Kaggle transformer DGA datasets,Kaggle community,Non-satellite,Sensor / lab,open_download,transformer,Transformer Failure
+RTI,RTI / FOI requests,Various Indian agencies,Non-satellite,Administrative records,foi_rti,school,School Infrastructure Failure
+RTI,RTI / FOI requests,Various Indian agencies,Non-satellite,Administrative records,foi_rti,transformer,Transformer Failure
+RTI,RTI / FOI requests,Various Indian agencies,Non-satellite,Administrative records,foi_rti,treefall,Urban Tree Fall
+RTI,RTI / FOI requests,Various Indian agencies,Non-satellite,Administrative records,foi_rti,bridge,Bridge Corrosion Risk
+RTI,RTI / FOI requests,Various Indian agencies,Non-satellite,Administrative records,foi_rti,pothole,Pothole Formation
+NEWS,News / media scraping,Various outlets,Non-satellite,Unstructured text,scrape,treefall,Urban Tree Fall
+NEWS,News / media scraping,Various outlets,Non-satellite,Unstructured text,scrape,garbage,Illegal Garbage Dump
+NEWS,News / media scraping,Various outlets,Non-satellite,Unstructured text,scrape,bridge,Bridge Corrosion Risk
+NEWS,News / media scraping,Various outlets,Non-satellite,Unstructured text,scrape,lake,Illegal Lake Encroachment
+TIMETBL,Indian Railways timetables,Ministry of Railways,Non-satellite,Transport schedules,scrape,railxing,Rail Crossing Accident Risk
+AADT,Highway AADT / DPR traffic counts,NHAI / State highway boards,Non-satellite,Traffic,restricted,bridge,Bridge Corrosion Risk
+AADT,Highway AADT / DPR traffic counts,NHAI / State highway boards,Non-satellite,Traffic,restricted,railxing,Rail Crossing Accident Risk
+OPENMETEO,Open-Meteo reanalysis archive,Open-Meteo,Non-satellite,Meteorology,open_api,pothole,Pothole Formation
+OPENMETEO,Open-Meteo reanalysis archive,Open-Meteo,Non-satellite,Meteorology,open_api,sewer,Sewer Blockage / Drain Choke
+OPENMETEO,Open-Meteo reanalysis archive,Open-Meteo,Non-satellite,Meteorology,open_api,lake,Illegal Lake Encroachment
+OPENMETEO,Open-Meteo reanalysis archive,Open-Meteo,Non-satellite,Meteorology,open_api,heatwave,Urban Heatwave Mortality Risk
