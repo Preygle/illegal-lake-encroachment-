@@ -102,35 +102,28 @@ def build_images(years: list[int]) -> dict:
 # --------------------------------------------------------------------------
 # Tabular payload
 # --------------------------------------------------------------------------
+# This repository covers ONE project: Illegal Lake Encroachment Prediction.
+# The catalogue built by 00_dataset_inventory.py is already scoped to it.
+STUDY_CITY = "Bengaluru"
+
+
 def build_data() -> dict:
     ds = pd.read_csv(PROC / "dataset_inventory.csv")
-    proj = pd.read_csv(PROC / "projects.csv")
-    edges = pd.read_csv(PROC / "project_dataset_edges.csv")
     health = pd.read_csv(PROC / "endpoint_health.csv")
     feats = pd.read_csv(PROC / "features_lake_year.csv")
     scenes = pd.read_csv(PROC / "s2_scenes.csv", parse_dates=["datetime"])
     wx = pd.read_csv(PROC / "weather_daily.csv", parse_dates=["date"])
     wx["PRECTOTCORR"] = pd.to_numeric(wx["PRECTOTCORR"], errors="coerce")
 
-    n_proj = edges.groupby("dataset_id").size()
-    datasets = []
-    for r in ds.itertuples():
-        datasets.append({
-            "id": r.dataset_id, "name": r.dataset, "provider": r.provider,
-            "country": r.provider_country, "modality": r.modality, "theme": r.theme,
-            "access": r.access_tier,
-            "res_m": None if pd.isna(r.res_m) else float(r.res_m),
-            "y0": int(r.year_start), "y1": int(r.year_end), "cost": r.cost,
-            "projects": [p for p in str(r.used_by).split(";") if p],
-            "n_proj": int(n_proj.get(r.dataset_id, 0)),
-        })
+    datasets = [{
+        "id": r.dataset_id, "name": r.dataset, "provider": r.provider,
+        "modality": r.modality, "theme": r.theme, "access": r.access_tier,
+        "res_m": None if pd.isna(r.res_m) else float(r.res_m),
+        "y0": int(r.year_start), "y1": int(r.year_end), "cost": r.cost,
+        "used": bool(r.used),
+    } for r in ds.itertuples()]
 
-    per_proj = edges.groupby("project_key").size()
-    projects = [{
-        "key": r.project_key, "name": r.project, "uniqueness": int(r.uniqueness),
-        "label_availability": r.label_availability, "difficulty": r.difficulty,
-        "feasible": r.feasible_1sem, "n_sources": int(per_proj.get(r.project_key, 0)),
-    } for r in proj.itertuples()]
+    health = health[health.dataset_id.isin(set(ds.dataset_id))].copy()
 
     # lake series
     f = feats.sort_values(["lake", "year"])
@@ -150,13 +143,11 @@ def build_data() -> dict:
     lakes = (f.groupby("lake")["ref_ha"].first()
               .sort_values(ascending=False).index.tolist())
 
-    # monthly climatology per city
-    wx["y"], wx["m"] = wx.date.dt.year, wx.date.dt.month
-    clim = (wx.groupby(["city", "y", "m"])["PRECTOTCORR"].sum()
-              .groupby(["city", "m"]).mean().unstack())
-    climatology = {c: [round(float(clim.loc[c, m]), 1) for m in range(1, 13)]
-                   for c in clim.index}
-    cities = clim.sum(axis=1).sort_values(ascending=False).index.tolist()
+    # monthly rainfall for the study city
+    b = wx[wx.city == STUDY_CITY].copy()
+    b["y"], b["m"] = b.date.dt.year, b.date.dt.month
+    clim = b.groupby(["y", "m"])["PRECTOTCORR"].sum().groupby("m").mean()
+    climatology = [round(float(clim.loc[m]), 1) for m in range(1, 13)]
 
     h = health.merge(ds[["dataset_id", "dataset"]], on="dataset_id", how="left")
     health_rows = [{
@@ -171,14 +162,13 @@ def build_data() -> dict:
     years = [int(y) for y in scenes.year]
 
     return {
-        "datasets": datasets, "projects": projects,
-        "edges": [{"d": r.dataset_id, "p": r.project_key} for r in edges.itertuples()],
+        "datasets": datasets,
         "lakes": lakes, "lakeArea": lake_area, "lakeMeta": lake_meta,
-        "cities": cities, "climatology": climatology,
+        "city": STUDY_CITY, "climatology": climatology,
         "health": health_rows, "scenes": scene_rows,
         "meta": {"health_ok": int(health.reachable.sum()),
                  "health_n": int(len(health)),
-                 "n_edges": int(len(edges))},
+                 "n_used": sum(1 for d in datasets if d["used"])},
     }, years
 
 
@@ -197,10 +187,12 @@ def clean(o):
 
 
 if __name__ == "__main__":
-    print("[1/3] tabular payload")
+    print("[1/3] tabular payload  (lake project only)")
     data, years = build_data()
-    print(f"  {len(data['datasets'])} sources, {len(data['projects'])} projects, "
-          f"{len(data['lakeArea'])} lake-years, {len(data['cities'])} cities")
+    print(f"  {len(data['datasets'])} sources "
+          f"({data['meta']['n_used']} actually used), "
+          f"{len(data['lakeArea'])} lake-years, "
+          f"{len(data['health'])} endpoints, city = {data['city']}")
 
     print("[2/3] imagery crops")
     data["images"] = build_images(years)

@@ -347,15 +347,14 @@ def lake_areas(stacks: dict[int, dict], masks) -> pd.DataFrame:
 # ==========================================================================
 def fetch_gibs() -> None:
     # WMS 1.3.0 + EPSG:4326 => BBOX is lat_min,lon_min,lat_max,lon_max
+    # Only the true-colour layers are relevant here - they place the Bengaluru
+    # lake belt in its regional context. (Night lights and land-surface
+    # temperature belonged to other candidate projects and are not fetched.)
     jobs = [
         ("modis_truecolor_karnataka", "MODIS_Terra_CorrectedReflectance_TrueColor",
          (11.5, 74.0, 18.5, 81.0), "2024-02-15", 1200, 1200),
         ("modis_truecolor_india", "MODIS_Terra_CorrectedReflectance_TrueColor",
          (6.0, 67.0, 37.0, 98.0), "2024-02-15", 1240, 1240),
-        ("viirs_nightlights_karnataka", "VIIRS_SNPP_DayNightBand_At_Sensor_Radiance",
-         (11.5, 74.0, 18.5, 81.0), "2024-02-15", 1200, 1200),
-        ("modis_lst_india", "MODIS_Terra_Land_Surface_Temp_Day",
-         (6.0, 67.0, 37.0, 98.0), "2024-05-15", 1240, 1240),
     ]
     base = "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi"
     for name, layer, bbox, date, w, h in jobs:

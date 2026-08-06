@@ -4,7 +4,6 @@
 Exploratory analysis of the NON-SATELLITE layers.
 
 F08  rainfall seasonality heatmap, Bengaluru        (NASA POWER, ground-equivalent)
-F09  monsoon climatology across the 8 study cities
 F10  daily rainfall + the Sentinel-2 acquisition dates actually used
 F11  OpenStreetMap layer inventory over the lake belt
 F12  building-footprint density with lake outlines
@@ -126,47 +125,6 @@ def f08_seasonality(t: vs.Theme):
     return vs.save(fig, "F08_rainfall_seasonality", FIG, t)
 
 
-# ============================== F09 =======================================
-def f09_climatology(t: vs.Theme):
-    w = wx.copy()
-    w["month"] = w.date.dt.month
-    w["year"] = w.date.dt.year
-    monthly = (w.groupby(["city", "year", "month"])["PRECTOTCORR"].sum()
-                 .groupby(["city", "month"]).mean().unstack())
-    order = monthly.sum(axis=1).sort_values(ascending=False).index
-
-    fig, axes = plt.subplots(2, 4, figsize=(14.2, 6.6), sharex=True, sharey=True)
-    ymax = monthly.max().max() * 1.16
-    for ax, city in zip(axes.ravel(), order):
-        v = monthly.loc[city]
-        ax.fill_between(range(12), v.values, color=t.color(0), alpha=0.26, zorder=2)
-        ax.plot(range(12), v.values, color=t.color(0), lw=2.0, zorder=3)
-        pk = int(np.argmax(v.values))
-        ax.plot([pk], [v.values[pk]], "o", ms=7, color=t.color(0),
-                mec=t.surface, mew=1.6, zorder=4)
-        ax.annotate(f"{v.values[pk]:.0f} mm\n{MONTHS[pk]}", (pk, v.values[pk]),
-                    xytext=(0, 8), textcoords="offset points", ha="center",
-                    fontsize=8.5, color=t.ink2, fontweight="600")
-        ax.set_title(f"{city}   ({v.sum():,.0f} mm/yr)", fontsize=11)
-        ax.set_xticks(range(0, 12, 2))
-        ax.set_xticklabels([MONTHS[i] for i in range(0, 12, 2)], fontsize=9)
-        ax.set_ylim(0, ymax)
-        ax.grid(axis="x", visible=False)
-    for ax in axes[:, 0]:
-        ax.set_ylabel("Mean monthly\nrainfall (mm)", fontsize=9.5)
-
-    fig.suptitle("Monsoon climatology across the eight study cities",
-                 x=0.005, y=1.005, ha="left", fontsize=15, fontweight="600",
-                 color=t.ink)
-    fig.text(0.005, 0.978,
-             "Small multiples share one y-scale. Annual total in the panel title; "
-             "the marked point is the wettest month.",
-             ha="left", fontsize=9.5, color=t.muted)
-    fig.tight_layout(rect=(0, 0.02, 1, 0.965))
-    vs.source(fig, SRC_POWER, t)
-    return vs.save(fig, "F09_monsoon_climatology", FIG, t)
-
-
 # ============================== F10 =======================================
 def f10_daily_with_scenes(t: vs.Theme):
     b = wx[wx.city == "Bengaluru"].set_index("date")["PRECTOTCORR"]
@@ -203,8 +161,7 @@ def f11_osm_inventory(t: vs.Theme):
     rows = []
     for f, label in [("osm_water", "Waterbodies"), ("osm_roads", "Road segments"),
                      ("osm_buildings", "Building footprints"),
-                     ("osm_drains", "Drains / streams"),
-                     ("osm_amenity", "Civic point assets")]:
+                     ("osm_drains", "Drains / streams")]:
         p = RAW / f"{f}.json"
         if not p.exists():
             continue
@@ -226,7 +183,7 @@ def f11_osm_inventory(t: vs.Theme):
     ax.set_xlabel("Elements retrieved (log scale)")
     ax.grid(axis="y", visible=False)
     vs.title(ax, "OpenStreetMap extract over the Bengaluru lake belt",
-             "A single 22 × 17 km bounding box, five Overpass queries, 477k elements — no licence or login required.", t)
+             "A single 22 × 17 km bounding box, four Overpass queries — no licence or login required.", t)
     vs.source(fig, SRC_OSM, t)
     return vs.save(fig, "F11_osm_inventory", FIG, t)
 
@@ -347,7 +304,7 @@ if __name__ == "__main__":
     print(f"    buildings: {len(building_points()):,} centroids")
     for mode in ("light", "dark"):
         t = vs.apply(mode)
-        for fn in (f08_seasonality, f09_climatology, f10_daily_with_scenes,
+        for fn in (f08_seasonality, f10_daily_with_scenes,
                    f11_osm_inventory, f12_building_density, f13_pressure):
             try:
                 p = fn(t)

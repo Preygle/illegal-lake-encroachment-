@@ -30,7 +30,7 @@ UA = {"User-Agent": "PredictiveDA-EDA/1.0 (university project; contact via githu
 OVERPASS = "https://overpass-api.de/api/interpreter"
 
 lakes = pd.read_csv(PROC / "lakes.csv")
-cities = pd.read_csv(PROC / "study_areas.csv")
+cities = pd.read_csv(PROC / "study_area.csv")      # Bengaluru only
 
 # Bengaluru lake-belt bounding box (covers all six study lakes)
 BBOX = (12.905, 77.555, 13.055, 77.755)  # S, W, N, E  (Overpass order)
@@ -78,16 +78,10 @@ def fetch_osm() -> None:
         "osm_buildings": f"""[out:json][timeout:240];
             way["building"]({bb});
             out center;""",
-        # storm drains / waterways -> sewer-blockage project
+        # drains and channels feeding / draining the lakes
         "osm_drains": f"""[out:json][timeout:180];
             way["waterway"~"^(drain|ditch|stream|canal)$"]({bb});
             out geom;""",
-        # civic point assets referenced by other projects
-        "osm_amenity": f"""[out:json][timeout:180];
-            (node["amenity"="waste_basket"]({bb});
-             node["highway"="street_lamp"]({bb});
-             node["railway"="level_crossing"]({bb}););
-            out;""",
     }
 
     for name, q in jobs.items():
@@ -158,19 +152,16 @@ PROBES = [
     ("GIBS",      "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/"
                   "MODIS_Terra_CorrectedReflectance_TrueColor/default/2024-01-15/250m/6/13/45.jpg"),
     ("S2",        "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a"),
-    ("S1",        "https://earth-search.aws.element84.com/v1/collections/sentinel-1-grd"),
     ("OPENMETEO", "https://archive-api.open-meteo.com/v1/archive?latitude=12.97&longitude=77.59"
                   "&start_date=2024-01-01&end_date=2024-01-02&daily=precipitation_sum"),
     ("LANDSAT",   "https://landsatlook.usgs.gov/stac-server/"),
     ("GHSL",      "https://ghsl.jrc.ec.europa.eu/download.php"),
     ("WORLDPOP",  "https://www.worldpop.org"),
     ("DATAGOVIN", "https://data.gov.in"),
-    ("CPCB_AQ",   "https://app.cpcbccr.com"),
     ("CENSUS",    "https://censusindia.gov.in"),
     ("IMD",       "https://mausam.imd.gov.in"),
     ("BHUVAN",    "https://bhuvan.nrsc.gov.in"),
     ("NWA",       "https://vedas.sac.gov.in"),
-    ("BMC",       "https://portal.mcgm.gov.in"),
 ]
 
 

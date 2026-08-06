@@ -438,12 +438,10 @@ def f20_change(t: vs.Theme):
 # ============================== F21 =======================================
 def f21_gibs(t: vs.Theme):
     import matplotlib.image as mpimg
-    panels = [("modis_truecolor_karnataka", "MODIS Terra true colour",
-               "250 m · 15 Feb 2024", (74.0, 81.0, 11.5, 18.5)),
-              ("viirs_nightlights_karnataka", "VIIRS Day–Night Band",
-               "500 m · night lights, urban extent proxy", (74.0, 81.0, 11.5, 18.5)),
-              ("modis_lst_india", "MODIS land-surface temperature",
-               "1 km · 15 May 2024, pre-monsoon heat", (67.0, 98.0, 6.0, 37.0))]
+    panels = [("modis_truecolor_india", "MODIS Terra true colour — India",
+               "250 m · 15 Feb 2024", (67.0, 98.0, 6.0, 37.0)),
+              ("modis_truecolor_karnataka", "Zoomed to Karnataka",
+               "250 m · 15 Feb 2024", (74.0, 81.0, 11.5, 18.5))]
     avail = [p for p in panels if (RAW / "gibs" / f"{p[0]}.png").exists()]
     if not avail:
         raise RuntimeError("no GIBS rasters cached")
@@ -462,11 +460,11 @@ def f21_gibs(t: vs.Theme):
         ax.set_title(f"{title_}\n{sub}", fontsize=10.5)
         bare_axes(ax)
 
-    fig.suptitle("Regional satellite context from NASA GIBS",
+    fig.suptitle("Where the study area sits — NASA GIBS regional context",
                  x=0.005, y=1.006, ha="left", fontsize=15, fontweight="600", color=t.ink)
     fig.text(0.005, 0.968,
-             "Three different sensors, three resolutions, one keyless WMS endpoint — the coarse tier "
-             "that frames the 10 m Sentinel-2 work.",
+             "MODIS Terra true colour at 250 m, from a keyless WMS endpoint. The coarse tier "
+             "that frames the 10 m Sentinel-2 work over the Bengaluru lake belt.",
              ha="left", va="top", fontsize=9.5, color=t.muted)
     fig.tight_layout(rect=(0, 0.015, 1, 0.945))
     vs.source(fig, "Source: NASA GIBS / Worldview WMS (EOSDIS) — MODIS Terra, VIIRS SNPP", t)

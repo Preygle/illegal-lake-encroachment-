@@ -10,7 +10,6 @@ Builds  data/processed/features_lake_year.csv   (6 lakes x 7 years)
    non-satellite : antecedent rainfall (30/90/365 d), mean max temperature,
                    building counts and road/drain length in distance bands
 
-F22  temporal coverage of every catalogued source against the study window
 F23  antecedent rainfall vs open-water area - the confound that must be controlled
 F24  built-up pressure vs change in open water
 F25  correlation structure of the assembled feature table
@@ -24,7 +23,6 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from matplotlib.patches import Rectangle
 
 import viz_style as vs
 
@@ -44,8 +42,6 @@ wx = pd.read_csv(PROC / "weather_daily.csv", parse_dates=["date"])
 wx["PRECTOTCORR"] = pd.to_numeric(wx["PRECTOTCORR"], errors="coerce")
 wx["T2M_MAX"] = pd.to_numeric(wx["T2M_MAX"], errors="coerce")
 lakes = pd.read_csv(PROC / "lakes.csv")
-ds = pd.read_csv(PROC / "dataset_inventory.csv")
-edges = pd.read_csv(PROC / "project_dataset_edges.csv")
 
 
 def lake_polys():
@@ -132,62 +128,6 @@ def build_features() -> pd.DataFrame:
     f.to_csv(PROC / "features_lake_year.csv", index=False)
     f.to_csv(TAB / "features_lake_year.csv", index=False)
     return f
-
-
-# ============================== F22 =======================================
-def f22_timeline(t: vs.Theme):
-    use = edges.groupby("dataset_id").size().rename("n_proj")
-    d = (ds.merge(use, left_on="dataset_id", right_index=True, how="left")
-           .fillna({"n_proj": 0}))
-    d["y0"] = d.year_start.clip(lower=1980)
-    d["y1"] = d.year_end.clip(upper=2026)
-    d["mod_rank"] = (d.modality == "Non-satellite").astype(int)
-    d = d.sort_values(["mod_rank", "y0", "dataset"])
-
-    fig, ax = plt.subplots(figsize=(12.6, 13.0))
-    for i, r in enumerate(d.itertuples()):
-        ax.add_patch(Rectangle((r.y0, i - 0.33), max(r.y1 - r.y0, 0.55), 0.66,
-                               facecolor=t.modality(r.modality), edgecolor="none",
-                               zorder=3))
-        if r.y0 <= 1980:
-            ax.annotate("", (1979.4, i), (1981.2, i),
-                        arrowprops=dict(arrowstyle="-|>", color=t.modality(r.modality),
-                                        lw=1.4), zorder=4)
-
-    split = int((d.modality == "Satellite").sum())
-    ax.axhline(split - 0.5, color=t.baseline, lw=1.2, zorder=2)
-
-    # the study window actually used
-    ax.add_patch(Rectangle((2018, -1.6), 8, len(d) + 1.4, facecolor=t.color(3),
-                           alpha=0.14, edgecolor="none", zorder=1))
-    ax.axvline(2018, color=t.color(3), lw=1.6, ls=(0, (4, 2)), zorder=2)
-    ax.text(2018.3, -1.45, "study window 2018–2025", fontsize=9,
-            color=t.color(3), fontweight="700", va="top", ha="left")
-
-    ax.set_yticks(range(len(d)))
-    ax.set_yticklabels(d.dataset, fontsize=8.6)
-    ax.set_ylim(len(d) - 0.4, -1.7)
-    ax.set_xlim(1979, 2027)
-    ax.set_xlabel("Year of coverage")
-    ax.grid(axis="y", visible=False)
-
-    from matplotlib.lines import Line2D
-    ax.legend(handles=[Line2D([], [], marker="s", ls="", ms=9, color=t.modality(m),
-                              label=m) for m in ("Satellite", "Non-satellite")],
-              loc="center left", bbox_to_anchor=(0.015, 0.34), ncol=1,
-              frameon=True, framealpha=0.94, facecolor=t.surface,
-              edgecolor=t.baseline, labelcolor=t.ink)
-
-    fig.suptitle("Temporal coverage of every catalogued source",
-                 x=0.005, y=0.998, ha="left", fontsize=15, fontweight="600",
-                 color=t.ink)
-    fig.text(0.005, 0.982,
-             "Arrows mark archives that begin before 1980. Only sources overlapping the shaded "
-             "window can supply features for this study.",
-             ha="left", va="top", fontsize=9.5, color=t.muted)
-    fig.tight_layout(rect=(0, 0.012, 1, 0.972))
-    vs.source(fig, "Source: dataset inventory compiled from deep-research-report.md", t)
-    return vs.save(fig, "F22_source_timeline", FIG, t)
 
 
 # ============================== F23 =======================================
@@ -315,7 +255,7 @@ if __name__ == "__main__":
     print("\n[2/2] figures")
     for mode in ("light", "dark"):
         t = vs.apply(mode)
-        for fn in (f22_timeline, f23_rain_vs_water, f24_pressure_vs_change, f25_corr):
+        for fn in (f23_rain_vs_water, f24_pressure_vs_change, f25_corr):
             try:
                 p = fn(t)
                 print(f"  [{mode}] {p.name}")
