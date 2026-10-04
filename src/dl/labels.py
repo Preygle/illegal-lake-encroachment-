@@ -183,7 +183,7 @@ def export_for_qgis():
                            dtype="uint8", nodata=C.IGNORE, **profile) as dst:
             dst.write(lab, 1)
             dst.write_colormap(1, {0: (33, 102, 172), 1: (27, 120, 55),
-                                   2: (191, 160, 110), 3: (200, 40, 40),
+                                   2: (201, 138, 30), 3: (200, 40, 40),
                                    255: (0, 0, 0)})
 
         st = C.load_stack(y)

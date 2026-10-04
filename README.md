@@ -58,6 +58,35 @@ exactly why it could never tell a drained lake from a built-on one.
 
 ---
 
+## Live demo
+
+Map any lake in any year with the trained model, in a few seconds:
+
+```bash
+python src/demo.py --lake bellandur --year 2021
+python src/demo.py --lake madiwala --year 2020 --rf   # also train + show the Random Forest (~30 s)
+python src/demo.py --list                              # which model maps which lake
+```
+
+It prints the land-cover composition inside the footprint for the old index rule
+and the U-Net, what the change from the previous year looks like (drained /
+hyacinth / encroachment), and the building count inside the statutory buffer,
+then saves the side-by-side map to `outputs/demo/`. Each lake is mapped by the
+model from the fold in which that lake was held out, so **the model has never
+seen the lake it is mapping**.
+
+Presentation figures (`python src/18_demo_figures.py` →
+`outputs/figures/light/`):
+
+| Figure | Shows |
+|---|---|
+| `M01_bellandur_drain_and_refill.png` | 2019 / 2021 / 2025 — water gone, bed bare, water back: a drain, not encroachment |
+| `M02_madiwala_hyacinth.png` | 2019 vs 2020 — water replaced by a weed mat, not lost |
+| `M03_model_comparison.png` | Per-lake macro-F1 for the index rule, Random Forest and U-Net |
+| `M04_building_growth.png` | Buildings inside the 75 m fence at every lake, 2016–2023 |
+
+---
+
 ## Pipeline
 
 Nine scripts, run in order. Each needs the previous one's output. Everything is
@@ -513,6 +542,8 @@ src/
   15_geofence.py            buffer zones and intrusion counting
   16_risk_model.py          mixed-effects models, conformal, desilting rule
   17_fetch_gee.py           Open Buildings Temporal, Dynamic World, JRC GSW
+  18_demo_figures.py        presentation figures M01-M04
+  demo.py                   live demo: map any lake-year in seconds
   dl/
     common.py               grid, lake geometry, folds, channels
     labels.py               seed-label construction
@@ -521,9 +552,11 @@ src/
     losses.py               weighted cross-entropy + Dice
     metrics.py              IoU, macro-F1, kappa, ECE, confusion
     gee.py                  Earth Engine access
+    viz.py                  land-cover map rendering, validated class palette
 data/raw/                   cached downloads (OSM JSON, Sentinel-2 NPZ, GIBS PNG)
 data/processed/             tidy CSV / GeoJSON, the analysis grid
 outputs/dl/                 labels, model results, predictions, geo-fence, risk
+outputs/demo/               maps written by demo.py
 outputs/figures/            EDA figures, light and dark
 reports/                    the two HTML reports from the EDA stage
 research-dl-lake-encroachment/
