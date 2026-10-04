@@ -1,0 +1,64 @@
+[1/5] Reference lake polygons
+  Bellandur Lake   <- osm     basins= 5 area=  316.9 ha  (published ~360 ha)
+  Varthur Lake     <- osm     basins= 5 area=  155.1 ha  (published ~180 ha)
+  Hebbal Lake      <- osm     basins= 1 area=   45.6 ha  (published ~75 ha)
+  Madiwala Lake    <- osm     basins= 2 area=   83.2 ha  (published ~45 ha)
+  Ulsoor Lake      <- osm     basins= 1 area=   38.1 ha  (published ~50 ha)
+  Sankey Tank      <- osm     basins= 1 area=   12.5 ha  (published ~15 ha)
+
+[2/5] Sentinel-2 scene search
+ year   datetime    cloud       tile
+ 2019 2019-03-30 0.000047 MGRS-43PGQ
+ 2020 2020-03-29 0.000010 MGRS-43PGQ
+ 2021 2021-03-14 0.000211 MGRS-43PGQ
+ 2022 2022-03-04 0.003774 MGRS-43PGQ
+ 2023 2023-04-13 0.000171 MGRS-43PGQ
+ 2024 2024-03-13 0.000111 MGRS-43PGQ
+ 2025 2025-02-06 0.000098 MGRS-43PGQ
+
+[3/5] Common target grid
+  CRS=EPSG:32643  shape=(926, 1096)  res=20.0m
+
+[4/5] Sentinel-2 band reads
+  2019  stale cache (old schema or grid) - refetching
+  2019  2019-03-30  cloud= 0.00%  (926, 1096)  6 bands  (185.4s)
+  2020  stale cache (old schema or grid) - refetching
+  2020  2020-03-29  cloud= 0.00%  (926, 1096)  6 bands  (182.2s)
+  2021  stale cache (old schema or grid) - refetching
+  2021  2021-03-14  cloud= 0.00%  (926, 1096)  6 bands  (167.4s)
+  2022  stale cache (old schema or grid) - refetching
+  2022  2022-03-04  cloud= 0.00%  (926, 1096)  6 bands  (118.3s)
+  2023  stale cache (old schema or grid) - refetching
+  2023  2023-04-13  cloud= 0.00%  (926, 1096)  6 bands  (147.6s)
+  2024  stale cache (old schema or grid) - refetching
+  2024  2024-03-13  cloud= 0.00%  (926, 1096)  6 bands  (166.6s)
+  2025  stale cache (old schema or grid) - refetching
+  2025  2025-02-06  cloud= 0.00%  (926, 1096)  6 bands  (148.5s)
+
+  lake_water_area.csv  42 rows
+
+  open water (ha)
+year             2019   2020  2021  2022   2023   2024    2025
+lake                                                          
+Bellandur Lake  15.68  25.16  0.40  7.32   6.40   3.08  107.88
+Hebbal Lake      1.28  13.04  5.36  6.20   4.92   1.96    7.16
+Madiwala Lake    3.00  34.80  8.64  9.16  13.72   4.12   10.44
+Sankey Tank      1.04   2.00  3.44  2.76   2.72   1.20    2.44
+Ulsoor Lake      4.12   5.00  2.68  2.12   3.72   2.04    3.20
+Varthur Lake    12.64   2.12  0.04  3.40   1.20  12.48   45.72
+
+  vegetation inside footprint (ha)
+year              2019    2020    2021    2022    2023    2024    2025
+lake                                                                  
+Bellandur Lake  260.24  269.36  249.36  263.80  187.92  187.88  140.28
+Hebbal Lake      43.12   10.40    5.36    3.44    6.12    6.60    2.80
+Madiwala Lake    17.60   43.28   11.60   14.64   28.68   12.60   30.68
+Sankey Tank       0.72    0.48    0.32    0.36    0.32    0.60    0.04
+Ulsoor Lake       4.36    2.88    3.00    2.60    1.40    4.72    1.04
+Varthur Lake    128.92  135.72   97.48  133.68  107.88  136.00   83.84
+
+[5/5] NASA GIBS regional context
+  modis_truecolor_karnataka      cached
+  modis_truecolor_india          cached
+
+Done.

@@ -1,0 +1,22 @@
+[1/3] loading scenes and labels
+[2/3] folds
+  fold 0  test=Bellandur Lake   val=Varthur Lake
+  fold 1  test=Varthur Lake     val=Madiwala Lake
+  fold 2  test=Madiwala Lake    val=Hebbal Lake
+  fold 3  test=Hebbal Lake      val=Ulsoor Lake
+  fold 4  test=Ulsoor Lake      val=Sankey Tank
+  fold 5  test=Sankey Tank      val=Bellandur Lake
+[3/3] per fold
+  fold 0  Bellandur Lake    RF macro-F1 0.799   rule 0.797   (166,634 test px, 31s)
+  fold 1  Varthur Lake      RF macro-F1 0.763   rule 0.754   (102,474 test px, 30s)
+  fold 2  Madiwala Lake     RF macro-F1 0.777   rule 0.718   (69,612 test px, 28s)
+  fold 3  Hebbal Lake       RF macro-F1 0.780   rule 0.739   (50,836 test px, 28s)
+  fold 4  Ulsoor Lake       RF macro-F1 0.786   rule 0.698   (46,288 test px, 28s)
+  fold 5  Sankey Tank       RF macro-F1 0.721   rule 0.608   (31,344 test px, 28s)
+
+=== held-out means over 6 lakes (spread in brackets) ===
+  mndwi_rule     macro-F1 0.719 [0.608-0.797]   kappa 0.411   IoU water 0.736  veg 0.557  bare 0.439  built 0.000
+  random_forest  macro-F1 0.771 [0.721-0.799]   kappa 0.684   IoU water 0.752  veg 0.894  bare 0.640  built 0.350
+
+  the U-Net has to clear 0.791 macro-F1 to be recommended (RF 0.771 + the 2-point rule)
+  -> C:\Users\moham\Documents\PROGRAMMING\Predictive_DA\outputs\dl\rf

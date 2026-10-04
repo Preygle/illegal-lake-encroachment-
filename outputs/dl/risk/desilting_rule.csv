@@ -1,0 +1,37 @@
+lake,from_year,to_year,d_water_frac,d_veg_frac,d_bare_frac,d_built_frac,recovers_later,built_persists,reading
+Bellandur Lake,2019,2020,-0.0444,-0.0052,0.0496,0.0,True,True,no material water loss
+Bellandur Lake,2020,2021,-0.0861,-0.4337,0.4288,0.0909,True,False,"drained (bed bare, water returns) - check desilting records"
+Bellandur Lake,2021,2022,0.0677,0.1608,-0.1521,-0.0763,True,True,no material water loss
+Bellandur Lake,2022,2023,0.0317,-0.237,0.1553,0.0499,True,False,no material water loss
+Bellandur Lake,2023,2024,0.0301,-0.0756,0.1069,-0.0613,True,False,no material water loss
+Bellandur Lake,2024,2025,0.0867,0.4884,-0.5719,-0.0032,False,True,no material water loss
+Hebbal Lake,2019,2020,0.6065,0.3045,-0.9111,0.0,True,True,no material water loss
+Hebbal Lake,2020,2021,0.2298,-0.2288,-0.0008,0.0,True,True,no material water loss
+Hebbal Lake,2021,2022,0.0132,-0.0115,-0.0018,0.0,True,True,no material water loss
+Hebbal Lake,2022,2023,-0.0097,0.0044,0.0044,0.0009,True,True,no material water loss
+Hebbal Lake,2023,2024,0.0255,-0.029,0.0044,-0.0009,True,True,no material water loss
+Hebbal Lake,2024,2025,-0.0158,0.0185,-0.0044,0.0018,False,True,no material water loss
+Madiwala Lake,2019,2020,-0.6422,0.6772,-0.019,-0.016,True,True,"hyacinth spread, not lake loss"
+Madiwala Lake,2020,2021,0.6619,-0.6691,0.0073,0.0,True,True,no material water loss
+Madiwala Lake,2021,2022,-0.0241,0.0306,-0.0073,0.0007,True,True,no material water loss
+Madiwala Lake,2022,2023,-0.2587,0.2594,0.0,-0.0007,True,True,"hyacinth spread, not lake loss"
+Madiwala Lake,2023,2024,0.2915,-0.2973,0.0029,0.0029,True,False,no material water loss
+Madiwala Lake,2024,2025,-0.2179,0.223,-0.0029,-0.0022,False,True,"hyacinth spread, not lake loss"
+Sankey Tank,2019,2020,-0.0226,0.0129,0.0097,0.0,True,True,no material water loss
+Sankey Tank,2020,2021,0.0032,-0.0065,0.0032,0.0,True,True,no material water loss
+Sankey Tank,2021,2022,0.029,-0.0161,-0.0129,0.0,True,True,no material water loss
+Sankey Tank,2022,2023,-0.0064,0.0032,0.0032,0.0,True,True,no material water loss
+Sankey Tank,2023,2024,0.0064,-0.0064,0.0,0.0,True,True,no material water loss
+Sankey Tank,2024,2025,-0.0032,0.0258,-0.0226,0.0,False,True,no material water loss
+Ulsoor Lake,2019,2020,0.0179,0.0147,-0.0346,0.0021,True,False,no material water loss
+Ulsoor Lake,2020,2021,0.1101,-0.0766,-0.0315,-0.0021,True,True,no material water loss
+Ulsoor Lake,2021,2022,-0.0136,0.0116,0.0021,0.0,True,True,no material water loss
+Ulsoor Lake,2022,2023,-0.0084,0.0073,0.0011,0.0,True,True,no material water loss
+Ulsoor Lake,2023,2024,-0.1416,0.0189,0.1228,0.0,True,True,"drained (bed bare, water returns) - check desilting records"
+Ulsoor Lake,2024,2025,0.1594,-0.0703,-0.0892,0.0,False,True,no material water loss
+Varthur Lake,2019,2020,-0.0387,-0.0587,0.0977,-0.0003,True,True,no material water loss
+Varthur Lake,2020,2021,-0.0676,-0.8013,0.8688,0.0,True,True,"drained (bed bare, water returns) - check desilting records"
+Varthur Lake,2021,2022,0.0281,0.5838,-0.6449,0.033,True,False,no material water loss
+Varthur Lake,2022,2023,-0.0281,-0.2912,0.3523,-0.033,True,True,no material water loss
+Varthur Lake,2023,2024,0.0465,0.2878,-0.3343,0.0,True,True,no material water loss
+Varthur Lake,2024,2025,0.1556,0.1112,-0.2669,0.0,False,True,no material water loss

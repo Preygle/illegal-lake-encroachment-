@@ -1,0 +1,28 @@
+# Deep-learning / modelling stack, kept out of the main pipeline so the existing
+# EDA run stays light. Install with:  pip install -r requirements-dl.txt
+#
+# The base pipeline (src/00 - src/10) needs only:
+#   pandas numpy matplotlib rasterio shapely pyproj requests pillow scipy
+
+torch>=2.0            # CPU build locally; GPU build on Colab/Kaggle
+torchvision>=0.15     # only for transform utilities
+scikit-learn>=1.3     # Random Forest baseline, metrics
+                      # note: native temperature scaling needs 1.8+; this project
+                      # is on 1.6.1, so dl/unet.py implements it directly
+statsmodels>=0.14     # MixedLM - the mixed-effects risk model
+geopandas>=0.14       # geo-fence geometry
+xgboost>=2.0          # ONLY for the leakage exhibit in 16_risk_model.py
+pymannkendall>=1.4    # optional: indicative trend tests on the water series
+earthengine-api>=1.0  # 17_fetch_gee.py: Open Buildings Temporal, Dynamic World,
+                      # JRC Global Surface Water. Auth once with
+                      # `earthengine authenticate`; project from EE_PROJECT,
+                      # default satellite-505815 (as in satellite-prediction)
+
+# Deliberately NOT required:
+#   imbalanced-learn - class weights handle the imbalance; SMOTE is meaningless
+#                      on spatially structured pixels
+#   optuna           - there is no hyperparameter budget worth spending on six
+#                      folds; the configuration is fixed and reported as such
+#   mapie            - jackknife+ is ~40 lines, implemented in 16_risk_model.py
+#   segmentation-models-pytorch - the U-Net is ~80 lines and owning it makes the
+#                      viva easier

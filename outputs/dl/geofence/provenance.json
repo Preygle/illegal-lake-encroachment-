@@ -1,0 +1,10 @@
+{
+  "fences_m": [
+    30,
+    75
+  ],
+  "built_frac_is_time_invariant": true,
+  "built_label_source": "OpenStreetMap snapshot, single epoch (2026)",
+  "caveat": "built_frac_* and bldg_in_* do not vary with year. The built-up training labels and the vector footprints both come from one OpenStreetMap snapshot, so these columns say WHERE buildings are, not WHEN they appeared. A genuine per-year building series needs GOOGLE/Research/open-buildings-temporal/v1 (annual 2016-2023).",
+  "legal": "30 m = Bengaluru Master Plan / KTCDA; 75 m = NGT O.A. 222/2014, general application set aside by the Supreme Court in 2019. Karnataka Act 19 of 2026 tiers the buffer by tank size, measured from the revenue boundary, which is not the OpenStreetMap polygon used here."
+}

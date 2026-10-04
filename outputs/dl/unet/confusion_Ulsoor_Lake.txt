@@ -1,0 +1,5 @@
+true\pred        water vegetatio      bare     built
+water           0.948     0.003     0.049     0.000   (n=5,756)
+vegetation      0.012     0.936     0.035     0.017   (n=10,870)
+bare            0.022     0.047     0.598     0.333   (n=17,986)
+built           0.002     0.055     0.151     0.792   (n=11,676)

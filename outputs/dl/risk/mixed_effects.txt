@@ -1,0 +1,16 @@
+         Mixed Linear Model Regression Results
+========================================================
+Model:            MixedLM Dependent Variable: water_frac
+No. Observations: 42      Method:             REML      
+No. Groups:       6       Scale:              0.0273    
+Min. group size:  7       Log-Likelihood:     -0.5195   
+Max. group size:  7       Converged:          Yes       
+Mean group size:  7.0                                   
+--------------------------------------------------------
+                Coef. Std.Err.   z   P>|z| [0.025 0.975]
+--------------------------------------------------------
+Intercept       0.578    0.160 3.616 0.000  0.265  0.891
+year_c          0.026    0.014 1.906 0.057 -0.001  0.053
+rain_365d_z     0.008    0.027 0.309 0.757 -0.045  0.062
+Group Var       0.149    0.629                          
+========================================================

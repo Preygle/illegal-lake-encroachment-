@@ -1,0 +1,57 @@
+[1/5] Reference lake polygons
+  Bellandur Lake   <- osm     basins= 5 area=  316.9 ha  (published ~360 ha)
+  Varthur Lake     <- osm     basins= 5 area=  155.1 ha  (published ~180 ha)
+  Hebbal Lake      <- osm     basins= 1 area=   45.6 ha  (published ~75 ha)
+  Madiwala Lake    <- osm     basins= 2 area=   83.2 ha  (published ~45 ha)
+  Ulsoor Lake      <- osm     basins= 1 area=   38.1 ha  (published ~50 ha)
+  Sankey Tank      <- osm     basins= 1 area=   12.5 ha  (published ~15 ha)
+
+[2/5] Sentinel-2 scene search
+ year   datetime    cloud       tile
+ 2019 2019-03-30 0.000047 MGRS-43PGQ
+ 2020 2020-03-29 0.000010 MGRS-43PGQ
+ 2021 2021-03-14 0.000211 MGRS-43PGQ
+ 2022 2022-03-04 0.003774 MGRS-43PGQ
+ 2023 2023-04-13 0.000171 MGRS-43PGQ
+ 2024 2024-03-13 0.000111 MGRS-43PGQ
+ 2025 2025-02-06 0.000098 MGRS-43PGQ
+
+[3/5] Common target grid
+  CRS=EPSG:32643  shape=(926, 1096)  res=20.0m
+
+[4/5] Sentinel-2 band reads
+  2019  cached
+  2020  cached
+  2021  cached
+  2022  cached
+  2023  cached
+  2024  cached
+  2025  cached
+
+  lake_water_area.csv  42 rows
+
+  open water (ha)
+year             2019   2020   2021   2022   2023   2024   2025
+lake                                                           
+Bellandur Lake  38.96  17.76   0.00  20.32  30.68  45.80  67.80
+Hebbal Lake     36.04  26.52  34.64  35.88  34.40  37.00  35.48
+Madiwala Lake   61.36   4.80  62.60  59.08  40.52  66.20  41.76
+Sankey Tank     10.52   9.64   8.44   9.12   9.04  10.44   9.84
+Ulsoor Lake     29.56  29.88  33.88  34.92  32.88  34.36  34.24
+Varthur Lake    12.40   9.40   0.00   3.12   0.00   7.60  26.12
+
+  vegetation inside footprint (ha)
+year              2019    2020    2021    2022    2023    2024    2025
+lake                                                                  
+Bellandur Lake  273.92  284.52  170.60  238.72  149.72  123.80  245.80
+Hebbal Lake       8.20   18.80    8.76    8.68    9.68    7.60    9.44
+Madiwala Lake    10.84   76.04   17.08   23.52   40.92   13.24   40.56
+Sankey Tank       0.60    0.84    0.88    0.48    0.64    0.44    0.68
+Ulsoor Lake       7.40    6.92    3.56    3.04    4.52    3.28    2.88
+Varthur Lake    140.44  132.52   15.76  119.40   75.40  138.04  125.68
+
+[5/5] NASA GIBS regional context
+  modis_truecolor_karnataka      cached
+  modis_truecolor_india          cached
+
+Done.

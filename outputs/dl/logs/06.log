@@ -1,0 +1,13 @@
+[1/2] building feature table
+  features_lake_year.csv  42 rows x 35 cols
+  lakes=6  years=[np.int64(2019), np.int64(2020), np.int64(2021), np.int64(2022), np.int64(2023), np.int64(2024), np.int64(2025)]
+  columns: lake, year, ref_ha, water_ha, veg_ha, other_ha, water_frac, veg_frac, wet_frac, valid_frac, mean_mndwi, mean_ndwi, mean_ndvi, scl_water_ha, collar_veg_frac, collar_water_frac, scene_date, rain_30d, rain_90d, rain_365d, rain_dry_since_oct, tmax_30d, bldg_100m, bldg_per_ha_100m, bldg_250m, bldg_per_ha_250m, bldg_500m, bldg_per_ha_500m, road_km_500m, drain_km_500m, lat, lon, nominal_area_ha, water_ha_delta, water_ha_pct
+
+[2/2] figures
+  [light] F23_rainfall_vs_water.png
+  [light] F24_pressure_vs_change.png
+  [light] F25_feature_correlation.png
+  [dark] F23_rainfall_vs_water.png
+  [dark] F24_pressure_vs_change.png
+  [dark] F25_feature_correlation.png
+Done.

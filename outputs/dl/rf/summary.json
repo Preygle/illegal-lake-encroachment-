@@ -1,0 +1,31 @@
+{
+  "per_lake": {
+    "Bellandur Lake": {
+      "rf_macro_f1": 0.7985339691361867,
+      "rule_macro_f1": 0.7968855411049778
+    },
+    "Varthur Lake": {
+      "rf_macro_f1": 0.7629776093492149,
+      "rule_macro_f1": 0.7535050891964082
+    },
+    "Madiwala Lake": {
+      "rf_macro_f1": 0.7767811311376099,
+      "rule_macro_f1": 0.7182215837518906
+    },
+    "Hebbal Lake": {
+      "rf_macro_f1": 0.7797937857522327,
+      "rule_macro_f1": 0.7390868561732161
+    },
+    "Ulsoor Lake": {
+      "rf_macro_f1": 0.7864922897970408,
+      "rule_macro_f1": 0.6982718862028805
+    },
+    "Sankey Tank": {
+      "rf_macro_f1": 0.7206826294654606,
+      "rule_macro_f1": 0.6076975853480383
+    }
+  },
+  "rf_mean_macro_f1": 0.7708769024396243,
+  "rule_mean_macro_f1": 0.7189447569629018,
+  "note": "The U-Net must exceed rf_mean_macro_f1 by more than 0.02 to be recommended over the Random Forest (MODEL_DESIGN.md 2.10)."
+}
