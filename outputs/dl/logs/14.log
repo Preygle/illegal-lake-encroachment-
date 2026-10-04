@@ -18,7 +18,7 @@ device: cpu
       epoch  25  train 0.5548  val 0.7565  lr 5.0e-04
       early stop at 25 (best 15, 0.6970)
       temperature 0.963 (fitted on Varthur Lake)
-    macro-F1 0.814  kappa 0.847  IoU water 0.844 veg 0.935 bare 0.844 built 0.298  (93s)
+    macro-F1 0.814  kappa 0.847  IoU water 0.844 veg 0.935 bare 0.844 built 0.298  (109s)
     water->veg 0.013  veg->water 0.001
 
   fold 1: test=Varthur Lake  val=Madiwala Lake  train=4 lakes
@@ -30,7 +30,7 @@ device: cpu
       epoch  37  train 0.5000  val 0.6436  lr 2.5e-04
       early stop at 37 (best 27, 0.6340)
       temperature 1.639 (fitted on Madiwala Lake)
-    macro-F1 0.779  kappa 0.773  IoU water 0.659 veg 0.913 bare 0.799 built 0.315  (168s)
+    macro-F1 0.779  kappa 0.773  IoU water 0.659 veg 0.913 bare 0.799 built 0.315  (182s)
     water->veg 0.062  veg->water 0.003
 
   fold 2: test=Madiwala Lake  val=Hebbal Lake  train=4 lakes
@@ -42,7 +42,7 @@ device: cpu
       epoch  38  train 0.5121  val 0.5556  lr 5.0e-04
       early stop at 38 (best 28, 0.4331)
       temperature 1.128 (fitted on Hebbal Lake)
-    macro-F1 0.757  kappa 0.562  IoU water 0.842 veg 0.881 bare 0.307 built 0.547  (200s)
+    macro-F1 0.757  kappa 0.562  IoU water 0.842 veg 0.881 bare 0.307 built 0.547  (231s)
     water->veg 0.011  veg->water 0.001
 
   fold 3: test=Hebbal Lake  val=Ulsoor Lake  train=4 lakes
@@ -54,7 +54,7 @@ device: cpu
       epoch  34  train 0.5061  val 0.7199  lr 5.0e-04
       early stop at 34 (best 24, 0.5730)
       temperature 1.384 (fitted on Ulsoor Lake)
-    macro-F1 0.840  kappa 0.768  IoU water 0.855 veg 0.887 bare 0.714 built 0.498  (214s)
+    macro-F1 0.840  kappa 0.768  IoU water 0.855 veg 0.887 bare 0.714 built 0.498  (217s)
     water->veg 0.004  veg->water 0.007
 
   fold 4: test=Ulsoor Lake  val=Sankey Tank  train=4 lakes
@@ -65,7 +65,7 @@ device: cpu
       epoch  28  train 0.5092  val 0.8312  lr 5.0e-04
       early stop at 28 (best 18, 0.8151)
       temperature 1.273 (fitted on Sankey Tank)
-    macro-F1 0.810  kappa 0.693  IoU water 0.886 veg 0.825 bare 0.553 built 0.521  (183s)
+    macro-F1 0.810  kappa 0.693  IoU water 0.886 veg 0.825 bare 0.553 built 0.521  (179s)
     water->veg 0.014  veg->water 0.001
 
   fold 5: test=Sankey Tank  val=Bellandur Lake  train=4 lakes
@@ -78,7 +78,7 @@ device: cpu
       epoch  43  train 0.4791  val 0.5529  lr 1.3e-04
       early stop at 43 (best 33, 0.5363)
       temperature 1.008 (fitted on Bellandur Lake)
-    macro-F1 0.713  kappa 0.620  IoU water 0.443 veg 0.832 bare 0.435 built 0.569  (181s)
+    macro-F1 0.713  kappa 0.620  IoU water 0.443 veg 0.832 bare 0.435 built 0.569  (199s)
     water->veg 0.002  veg->water 0.001
 
   out-of-fold land-cover maps -> C:\Users\moham\Documents\PROGRAMMING\Predictive_DA\outputs\dl\pred

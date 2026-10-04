@@ -43,6 +43,11 @@ OUT = C.DL / "unet"
 PRED = C.DL / "pred"
 
 
+def run_tag(args) -> str:
+    """Suffix that keeps every negative-control output apart from the real run."""
+    return "_shuffled" if args.shuffle_labels else ""
+
+
 # ==========================================================================
 # Inference
 # ==========================================================================
@@ -148,7 +153,13 @@ def train_fold(fold, store, index, args, device):
     # Re-saving to the same path on every improvement trips Windows error 1224
     # (the file still has a mapped section open from the previous write), and
     # it is slower besides - this model is only ~2 MB of parameters.
-    ckpt = OUT / f"fold{fold['fold']}_best.pt"
+    #
+    # The negative control writes to its own filename. It used to share
+    # fold<k>_best.pt with the real run, so running the control after the real
+    # model silently replaced every real checkpoint with a model trained on
+    # scrambled labels - the reported scores stayed correct while the saved
+    # weights became useless.
+    ckpt = OUT / f"fold{fold['fold']}_best{run_tag(args)}.pt"
     best_state = None
     best, bad, best_epoch = float("inf"), 0, -1
     for epoch in range(args.epochs):
@@ -253,7 +264,7 @@ def main(args):
               f"train={len(f['train'])} lakes")
         res, cm, maps = train_fold(f, store, index, args, device)
         rows.append(res)
-        (OUT / f"confusion_{f['test'].replace(' ', '_')}.txt").write_text(
+        (OUT / f"confusion_{f['test'].replace(' ', '_')}{run_tag(args)}.txt").write_text(
             M.format_cm(cm), encoding="utf-8")
 
         region = store.rasters[f["test"]]["region"]
@@ -269,7 +280,7 @@ def main(args):
               f"veg->water {res['veg_as_water']:.3f}")
 
     df = pd.DataFrame(rows)
-    tag = "_shuffled" if args.shuffle_labels else ""
+    tag = run_tag(args)
     df.to_csv(OUT / f"per_fold{tag}.csv", index=False)
 
     if not args.shuffle_labels and len(folds) == len(C.folds()):
