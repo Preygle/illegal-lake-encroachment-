@@ -168,10 +168,11 @@ given lake, so those columns are effectively a name tag for the lake. A tree
 model splits on them, memorises which lake it is looking at, and returns a
 confident number that means nothing.
 
-`16_risk_model.py --show-leakage` demonstrates this on purpose: XGBoost scores
-**R² +1.000 in-sample** and collapses out-of-fold. A linear mixed-effects model
-absorbs the same columns into a per-lake intercept instead, and reports an
-honestly wide interval.
+`16_risk_model.py --show-leakage` demonstrates this on purpose: 15 of the 30
+pressure features are constant within a lake, and XGBoost scores **R² +1.000
+in-sample but +0.302 leave-one-lake-out**. The gap is the memorisation. A linear
+mixed-effects model absorbs the same columns into a per-lake intercept instead,
+and reports an honestly wide interval.
 
 Predictions are wrapped in **jackknife+ conformal intervals**, left out by lake
 and evaluated on lakes the intervals never saw. Two caveats travel with every
@@ -210,8 +211,7 @@ the pixel count. Say it before the panel does.
 
 - **Shuffle-label control.** Train once on scrambled labels; the score must
   collapse to near chance. If it does not, the pipeline leaks and no other
-  number can be trusted. On the last complete run it fell from **0.766 to
-  0.373**.
+  number can be trusted. It falls from **0.786 to 0.389**.
 - **A pre-registered decision rule.** Fixed in `MODEL_DESIGN.md` *before* any
   numbers existed: if the U-Net does not beat the Random Forest by more than
   **2 points of macro-F1**, the report recommends the Random Forest and presents
@@ -238,12 +238,55 @@ scaling.
 | Model | macro-F1 | kappa | IoU water | hyacinth | bare | built |
 |---|---|---|---|---|---|---|
 | MNDWI / NDVI rule | 0.719 | 0.411 | 0.736 | 0.557 | 0.439 | **0.000** |
-| **Random Forest** | **0.771** | **0.684** | 0.752 | **0.894** | **0.640** | 0.350 |
-| U-Net *(5 of 6 folds)* | 0.800\* | — | **0.806** | 0.886 | 0.639 | **0.441** |
+| **Random Forest** | **0.771** | 0.684 | 0.752 | **0.894** | **0.640** | 0.350 |
+| U-Net | 0.786 | **0.710** | **0.755** | 0.879 | 0.609 | **0.458** |
 
-\* The U-Net currently leads by about 0.019 — just under the 0.02 margin — so
-**Sankey Tank decides the recommendation**, and that is the fold which has not
-finished. See *Run status* below.
+**Verdict: the pre-registered rule recommends the Random Forest.** The U-Net
+leads by **+0.015** macro-F1 — below the +0.02 margin fixed before any numbers
+existed. It wins clearly on built-up (0.458 vs 0.350), where spatial context is
+what separates a building from a bright bare pixel, and on 4 of 6 lakes; the
+Random Forest wins on bare bed and vegetation, which are distinctive per pixel.
+
+Retraining moved individual folds by up to ±0.009, but the five-fold mean moved
+by only 0.0004, so the verdict is not an artefact of run-to-run noise. Full
+per-lake breakdown in `research-dl-lake-encroachment/RESULTS.md`.
+
+### What the four-class output shows (hectares)
+
+| Lake | Year | Water | Hyacinth | Bare bed |
+|---|---|---|---|---|
+| Bellandur | 2021 | **0.0** | 134.3 | **145.8** |
+| Varthur | 2021 | **0.0** | 4.6 | **149.4** |
+| Madiwala | 2020 | 10.8 | **71.2** | 1.0 |
+| Sankey Tank | every year | 11.1 – 11.6 | 0.1 – 0.6 | 0.4 – 1.2 |
+
+Bellandur and Varthur 2021 are drained beds; Madiwala 2020 is a hyacinth mat, not
+a lost lake; Sankey Tank is a stable full tank. **No lake-year produced an
+encroachment signal** — every water loss in the study period is explained by
+desilting or hyacinth.
+
+### Independent cross-checks
+
+- **`GOOGLE/DYNAMICWORLD/V1`** agrees with the segmentation on 66–94% of footprint
+  pixels. Agreement is lowest on the two hyacinth lakes because Dynamic World
+  rarely uses its `flooded_vegetation` class for the mats, labelling them trees,
+  grass or crops — a legend mismatch rather than a disagreement.
+- **`JRC/GSW1_4/YearlyHistory`** counts water seen at any time of year, so it
+  should read at least as high as our dry-season figure. On matched pixels it
+  does in 14 of 18 lake-years; the four exceptions are within 4.5 points,
+  consistent with its coarser 30 m pixels at the shoreline. It independently
+  reports **0% permanent water at Bellandur in 2021**.
+
+### Risk models
+
+- **Building model: +5.4% per year** (95% CI +4.1% to +6.7%) growth in buildings
+  inside the 75 m fence across all six lakes, 2016–2023. This is the project's
+  strongest quantitative result.
+- **Water model: rainfall explains nothing** at the pooled level (coefficient
+  −0.011, not significant). Between-lake variance is **10.4×** the residual, so
+  the jackknife+ intervals are wider than the whole 0–1 range: honest, and
+  uninformative for an unseen lake. Six lakes cannot support a predictive model
+  of a new lake's water fraction — that is the finding.
 
 ### Building growth inside the 75 m fence
 
@@ -274,9 +317,9 @@ each lake, so the layer is safe to use.
 | Water down across all lakes, rainfall low | Drought |
 
 The rule's first version called Bellandur 2021 an encroachment signal: the model
-had labelled 28.7 ha of dry, cracked bed as "built-up" (spectrally similar, and
+had labelled 35.0 ha of dry, cracked bed as "built-up" (spectrally similar, and
 built-up is the weakest class). Bellandur's built fraction across the seven years
-runs `0, 0, .09, .02, .07, .00, 0` — buildings do not appear and vanish. The rule
+runs `0, 0, .11, .02, .03, .00, 0` — buildings do not appear and vanish. The rule
 now requires a rise in built-up to **persist** before reading it as
 encroachment, and flags a non-persistent spike as probable bed misclassification.
 
@@ -284,33 +327,15 @@ encroachment, and flags a non-persistent spike as probable bed misclassification
 
 ## Run status
 
-The pipeline was interrupted by a low-memory condition partway through its final
-re-run, so the committed outputs are **not all from the same vintage**. This is
-stated explicitly rather than averaged away.
-
-| Output | Vintage | Status |
-|---|---|---|
-| `data/processed/lake_water_area.csv`, `features_lake_year.csv` | current | ✅ |
-| `outputs/dl/labels/` | current | ✅ |
-| `outputs/dl/rf/` | current | ✅ |
-| `outputs/dl/gee/` | current | ✅ |
-| `outputs/dl/unet/`, `outputs/dl/pred/` | before the reflectance fix | ⚠️ needs re-run |
-| `outputs/dl/geofence/`, `outputs/dl/risk/`, `features_lake_year_dl.csv` | before the area and reflectance fixes | ⚠️ needs re-run |
-
-To bring everything to one vintage (~20 minutes):
-
-```bash
-python src/14_train_unet.py --epochs 100
-python src/14_train_unet.py --shuffle-labels --epochs 30
-python src/17_fetch_gee.py --only dynamic_world
-python src/17_fetch_gee.py --only gsw
-python src/15_geofence.py
-python src/16_risk_model.py --show-leakage
-```
+Every output under `outputs/dl/` is on the corrected data — reflectance offset
+applied once, Madiwala fully on the grid. Stages 02–13 last ran on
+22 September 2026 and stages 14–17 on 4 October 2026; nothing stages 02–13
+produce depends on anything changed in between. Run logs are in
+`outputs/dl/logs/`.
 
 ---
 
-## Four bugs this build uncovered
+## Bugs this build uncovered
 
 Properties of the data, not model results. Each was found by something refusing
 to reconcile.
@@ -355,6 +380,15 @@ smaller than that — Sankey Tank is 76 × 74 — so each yielded a single patch
 year. At 64 pixels with 50% overlap the training set went from 98 patches to
 roughly 500, and 1.28 km of context still exceeds the network's receptive field,
 so nothing was lost.
+
+### 5. Two bugs in the evaluation code itself
+
+Both caught before reporting. The GSW comparison divided by footprint pixels that
+GSW never observed (18–31% of each footprint), which deflated GSW and made it
+look lower than our figures. And the first XGBoost leakage exhibit was fed
+`water_ha` — the target multiplied by the lake's area — plus the other land-cover
+fractions, which sum to ~1 with the target; its out-of-fold R² of 0.612 measured
+arithmetic, not skill. The exhibit now uses only pressure features.
 
 ---
 
@@ -402,9 +436,10 @@ India, Bhuvan, National Wetland Atlas 2024 or the BBMP Lakes Monitoring System.
   per-year building data, and the gap is never interpolated.
 - **Six lakes, one image per year.** Everything describes the dry-season minimum,
   not the annual cycle.
-- **Between-lake variance is several times the residual variance**, and it is
-  estimated from six clusters — below the 15–50 usually cited as a minimum. The
-  conformal intervals are wide by construction, and that is the finding.
+- **Between-lake variance is 10.4× the residual variance**, and it is estimated
+  from six clusters — below the 15–50 usually cited as a minimum. The conformal
+  intervals for the water model are wider than the whole 0–1 range: honest, and
+  uninformative for an unseen lake. That is the finding.
 
 ### The honest next step
 
