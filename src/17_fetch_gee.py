@@ -207,16 +207,22 @@ def global_surface_water(rasters):
             inside = r["inside"]
             n = int(inside.sum())
             valid = inside & (wc > 0)
+            nv = max(int(valid.sum()), 1)
+            # GSW has no observation for 18-31% of these footprints (waterClass
+            # 0). Its water fractions are therefore taken over the pixels it
+            # did observe, and ours over the same pixels, so both sides of the
+            # comparison share a denominator. Dividing by the whole footprint
+            # silently deflates GSW and makes it look lower than it is.
             rec = {"lake": lake, "year": year,
                    "gsw_valid_frac": round(float(valid.sum()) / n, 4),
                    # 2 = seasonal water, 3 = permanent water, 1 = not water
-                   "gsw_permanent_frac": round(float((inside & (wc == 3)).sum()) / n, 4),
-                   "gsw_any_water_frac": round(float((inside & (wc >= 2)).sum()) / n, 4),
+                   "gsw_permanent_frac": round(float((valid & (wc == 3)).sum()) / nv, 4),
+                   "gsw_any_water_frac": round(float((valid & (wc >= 2)).sum()) / nv, 4),
                    "gsw_mean_occurrence": round(float(occ_img[inside].mean()), 1),
                    "gsw_mean_recurrence": round(float(rec_img[inside].mean()), 1)}
             if pred is not None:
                 rec["ours_water_frac"] = round(
-                    float((inside & (pred == C.WATER)).sum()) / n, 4)
+                    float((valid & (pred == C.WATER)).sum()) / nv, 4)
             rows.append(rec)
     df = pd.DataFrame(rows)
     df.to_csv(OUT / "crosscheck_gsw.csv", index=False)

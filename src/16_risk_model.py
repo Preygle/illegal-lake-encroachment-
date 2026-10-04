@@ -289,11 +289,20 @@ def show_leakage(df: pd.DataFrame, target: str):
         print("  xgboost not installed - skipping")
         return None
 
+    # Exclude every column computed from the same land-cover map as the target.
+    # water_ha is the target multiplied by the footprint area, and the other
+    # footprint fractions sum to ~1 with it - a model given those is doing
+    # arithmetic, not prediction, and its score says nothing about lake
+    # identity. What remains are the pressure features a risk model would
+    # actually use: rainfall, buildings, roads, geometry and location.
+    derived = ("water_", "vegetation_", "bare_", "built_ha", "valid_")
     num = df.select_dtypes("number")
-    const_cols = [c for c in num.columns
-                  if c not in (target, "year", "year_c")
+    feats = [c for c in num.columns
+             if c not in (target, "year", "built_frac")
+             and not c.startswith(derived)]
+    const_cols = [c for c in feats
+                  if c != "year_c"
                   and df.groupby("lake")[c].nunique(dropna=False).max() == 1]
-    feats = [c for c in num.columns if c not in (target, "year")]
     d = df.dropna(subset=[target]).copy()
     X = d[feats].fillna(0).to_numpy()
     y = d[target].to_numpy()
