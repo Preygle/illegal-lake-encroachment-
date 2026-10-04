@@ -1,0 +1,325 @@
+# fields.yaml
+# Field definitions for: DL/ML methods for illegal lake encroachment detection
+# Every researched item is answered against ALL of these fields.
+# Format and rigour reference:
+#   C:\Users\moham\Documents\PROGRAMMING\satellite-prediction\docs\RESEARCH_DEEP_LEARNING.md
+#
+# Schema note: the top-level key HERE is `categories`, which is what
+# ~/.claude/skills/research/validate_json.py parses out of this file.
+# In the OUTPUT JSON files it is the opposite: the validator does NOT unwrap a
+# "categories" key, so result files must put the seven category names
+# (identity, fit_to_project, implementation, evaluation, evidence, risk,
+# verdict) as FLAT top-level keys alongside id, group, name and uncertain.
+# detail_level: brief -> moderate -> detailed
+
+topic: >-
+  Deep learning and machine learning methods for illegal lake encroachment
+  detection and predictive risk analysis using multi-temporal Sentinel-2
+  satellite imagery, Bengaluru lakes 2019-2025.
+
+# ---------------------------------------------------------------------------
+# Hard project constraints. Every field must be answered AGAINST these, not in
+# the abstract. An answer that would read the same for any project has failed.
+# ---------------------------------------------------------------------------
+project_constraints:
+  ground_truth: >-
+    None. No list of encroached lakes exists. Any method requiring supervised
+    encroachment labels must state where those labels would come from and what
+    they cost in student-days.
+  tabular_rows: 42
+  lakes: 6
+  years: 7
+  pixels_per_scene: ~900000
+  imagery: >-
+    Sentinel-2 L2A via Earth Search STAC / AWS open data. Tile MGRS-43PGQ.
+    Bands B02, B03, B04, B08, B11, SCL. Resampled to a common 20 m EPSG:32643
+    grid. Reflectance = DN * 0.0001 - 0.1 (processing baseline 04.00+ offset).
+  current_method: >-
+    MNDWI > 0 (Xu 2006) water mask, NDVI > 0.30 vegetation mask, pixel counting
+    inside a fixed OpenStreetMap lake polygon. This is the null baseline that
+    any proposed method must beat or justify replacing.
+  building_data: >-
+    OpenStreetMap, single 2026 snapshot. 420,080 footprints. Constant per lake,
+    therefore zero within-lake temporal variance and no growth signal.
+  lake_boundary: >-
+    OpenStreetMap multipolygon relations. Fixed across all 7 years. These are
+    NOT legal boundaries and carry no statutory standing.
+  confound_desilting: >-
+    Lakes are drained for desilting. Bellandur ran 15.7 ha (2019) -> 0.4 ha
+    (2021) -> 107.9 ha (2025). In a water-area time series this is
+    indistinguishable from encroachment without extra evidence.
+  confound_hyacinth: >-
+    Bellandur and Varthur carry water hyacinth mats that classify as
+    vegetation, not water. Bellandur 2019: 16 ha water, 260 ha vegetation
+    inside a 315 ha footprint.
+  scope_decision: >-
+    Deliver ONE deep learning model (the guide's requirement) plus a strong
+    classical baseline, plus geo-fencing. Expanding the dataset beyond 42 rows
+    is IN scope and is treated as the real blocker.
+  team: 1 student
+  compute: laptop CPU, with free Colab / Kaggle GPU available
+
+categories:
+
+  identity:
+    description: What the method is.
+    fields:
+      - name: method_name
+        required: true
+        detail_level: brief
+        description: Exact standard name of the method or dataset.
+      - name: family
+        required: true
+        detail_level: brief
+        description: >-
+          One of: deep-learning-image, deep-learning-sequence, classical-ml,
+          geospatial-rule, statistical-test, data-source.
+      - name: core_idea
+        required: true
+        detail_level: moderate
+        description: What the method actually does, in two or three sentences, B.Tech level.
+      - name: official_dataset_ids
+        required: true
+        detail_level: brief
+        description: >-
+          Exact official dataset IDs and product names if the item is or
+          depends on a dataset (e.g. COPERNICUS/S2_SR_HARMONIZED,
+          GOOGLE/Research/open-buildings-temporal/v1,
+          JRC/GHSL/P2023A/GHS_BUILT_S). Never paraphrase or shorten an ID.
+
+  fit_to_project:
+    description: Whether this works on THIS dataset, with THESE constraints.
+    fields:
+      - name: ground_truth_proxy_strategy
+        required: true
+        detail_level: detailed
+        description: >-
+          THE organising question of this project. How does the method
+          substitute for the missing encroachment label? One of: fully
+          unsupervised, threshold rule, zero-shot foundation model,
+          self-supervised, positive-unlabelled learning, programmatic weak
+          supervision, transfer from another labelled dataset, or manual
+          annotation. Name the strategy and say what it costs.
+      - name: input_required
+        required: true
+        detail_level: moderate
+        description: >-
+          Exactly what this method needs as input, and whether the project
+          already has it or must acquire it.
+      - name: viable_with_42_rows
+        required: true
+        detail_level: moderate
+        description: >-
+          yes / no / only-if-reframed. If the method operates per-pixel or
+          per-patch rather than per-lake-year, say so explicitly and give the
+          effective sample size that reframing produces.
+      - name: viable_without_ground_truth
+        required: true
+        detail_level: moderate
+        description: >-
+          yes / no / needs-weak-labels. If weak or proxy labels are needed,
+          name the exact source and estimate the labelling effort.
+      - name: resolution_match_20m
+        required: true
+        detail_level: moderate
+        description: >-
+          Does the method work at 20 m, or does it assume a resolution the
+          project does not have? Flag any case where a model pretrained on
+          sub-metre imagery would be applied to 20 m data.
+      - name: label_source_needed
+        required: true
+        detail_level: brief
+        description: Where supervision comes from, or "none" for unsupervised methods.
+      - name: fixes_which_stated_limitation
+        required: true
+        detail_level: moderate
+        description: >-
+          Which of the project's four written limitations this addresses:
+          (1) only 42 rows, (2) OpenStreetMap is one snapshot so buildings
+          cannot show growth, (3) no real ground truth, (4) one scene per year
+          shows only the dry-season minimum. Answer "none" if it addresses none.
+      - name: handles_desilting_confound
+        required: true
+        detail_level: moderate
+        description: >-
+          Can this method tell a drained-for-desilting lake apart from an
+          encroached one? This is the project's central analytical problem.
+      - name: handles_hyacinth_confound
+        required: true
+        detail_level: moderate
+        description: >-
+          Does this method separate open water from water hyacinth mats, or
+          does it collapse them? Bellandur and Varthur specifically have
+          published macrophyte-cover mapping (MDPI Remote Sensing 2020,
+          doi 10.3390/rs12223843) usable as a cross-check.
+      - name: legal_traceability
+        required: true
+        detail_level: detailed
+        description: >-
+          Does the method's output boundary map to an actual legal or cadastral
+          reference (Bengaluru Master Plan 30 m buffer as reinstated by the
+          Supreme Court, the earlier 75 m National Green Tribunal buffer,
+          Karnataka Tank Conservation and Development Authority records, Survey
+          of India records, Bhuvan, National Wetland Atlas 2024), or only to
+          the OpenStreetMap proxy polygon? State which buffer distance is being
+          tested and on what authority.
+      - name: temporal_granularity
+        required: true
+        detail_level: moderate
+        description: >-
+          For every input feature this method uses, does the value actually
+          vary year to year, or is it a one-time snapshot? This is the exact
+          flaw in the current OpenStreetMap building features and must be
+          checked for every new data source too (GHSL is 5-yearly, not annual).
+
+  implementation:
+    description: What it costs to actually build.
+    fields:
+      - name: libraries
+        required: true
+        detail_level: brief
+        description: Exact Python packages, and versions where they matter.
+      - name: pretrained_weights
+        required: true
+        detail_level: moderate
+        description: >-
+          Are pretrained weights available, what sensor and resolution were
+          they trained on, and where are they hosted?
+      - name: licence
+        required: true
+        detail_level: brief
+        description: >-
+          Licence of code, weights and data. Flag anything not usable in an
+          academic project.
+      - name: compute_requirement
+        required: true
+        detail_level: moderate
+        description: >-
+          CPU-only feasible? GPU hours needed? Does it fit inside free Colab or
+          Kaggle limits, or Google Earth Engine quotas? Reproducible end to end
+          by a solo student with no lab cluster?
+      - name: student_days
+        required: true
+        detail_level: brief
+        description: >-
+          Honest effort estimate in student-days for one student, including
+          data preparation and debugging, not just model fitting.
+
+  evaluation:
+    description: How it would be judged, and how the judgement could be fooled.
+    fields:
+      - name: metrics
+        required: true
+        detail_level: moderate
+        description: >-
+          The metrics this method should be judged by, and why accuracy alone
+          is or is not adequate.
+      - name: validation_protocol
+        required: true
+        detail_level: detailed
+        description: >-
+          The correct split, stated explicitly as one of leave-one-lake-out,
+          leave-one-year-out, leave-one-lake-year-out, spatial block hold-out,
+          or temporal hold-out. Naive k-fold on 42 rows drawn from only 6
+          clusters leaks lake identity into the test fold, so say what replaces
+          it.
+      - name: leakage_risk
+        required: true
+        detail_level: detailed
+        description: >-
+          Concrete ways this method can leak and produce a falsely high score,
+          especially spatial autocorrelation between neighbouring pixels or
+          patches, and the same lake appearing in both train and test.
+      - name: uncertainty_reporting
+        required: true
+        detail_level: moderate
+        description: >-
+          Does the method produce a calibrated uncertainty estimate (conformal
+          prediction interval, posterior credible interval, bootstrap band), or
+          only a bare point estimate? With no ground truth and 42 rows, a point
+          estimate with no interval is hard to defend.
+      - name: augmentation_honesty_risk
+        required: true
+        detail_level: moderate
+        description: >-
+          If the method expands the dataset synthetically (SMOTE, GAN,
+          diffusion, tabular or time-series augmentation), could the synthetic
+          data fabricate a plausible but false encroachment trend? Say how that
+          would be disclosed. Answer "not applicable" if no augmentation is
+          involved.
+
+  evidence:
+    description: What the literature actually reports, with sources.
+    fields:
+      - name: published_performance
+        required: true
+        detail_level: detailed
+        description: >-
+          Reported numbers from primary sources, with the metric named. Mark
+          any figure that could not be confirmed against a primary source as
+          [verify].
+      - name: study_area_of_that_work
+        required: true
+        detail_level: moderate
+        description: >-
+          Where and at what scale the published result was obtained. A number
+          from a 50,000-lake study is not a forecast for 6 lakes.
+      - name: applies_to_indian_urban_lakes
+        required: true
+        detail_level: moderate
+        description: >-
+          Has this been applied to Indian urban lakes, and to Bengaluru lakes
+          specifically? Name the papers if so.
+      - name: evidence_recency
+        required: true
+        detail_level: brief
+        description: >-
+          Publication or release year of the strongest evidence cited. Flag
+          items whose only support is pre-2020 work.
+      - name: primary_sources
+        required: true
+        detail_level: detailed
+        description: >-
+          Direct links to papers, dataset pages, code repositories and official
+          documentation. Prefer DOIs and official portals.
+
+  risk:
+    description: How this fails, and what a panel will do to it.
+    fields:
+      - name: failure_modes
+        required: true
+        detail_level: detailed
+        description: Concrete ways this method fails on this specific dataset.
+      - name: panel_defensibility
+        required: true
+        detail_level: detailed
+        description: >-
+          What a capstone panel will attack, and whether the method survives
+          the question "how do you know that number is real when you have no
+          ground truth?"
+      - name: honest_expectation
+        required: true
+        detail_level: moderate
+        description: >-
+          What this will realistically achieve here, stated plainly. A null
+          result is an acceptable and reportable answer.
+
+  verdict:
+    description: The recommendation.
+    fields:
+      - name: recommended_rank
+        required: true
+        detail_level: moderate
+        description: >-
+          adopt / adopt-if-time / consider-with-reasons / reject, plus a
+          one-line justification.
+      - name: one_line_for_the_guide
+        required: true
+        detail_level: brief
+        description: >-
+          A single sentence the student can say to the project guide explaining
+          whether this method was used and why, in plain technical English.
+
+# Reserved. Auto-filled during the deep phase with the fields each agent could
+# not confirm against a primary source.
+uncertain: []

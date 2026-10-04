@@ -1,0 +1,333 @@
+# outline.yaml
+# Items + execution config for the deep research phase.
+# Field definitions live in fields.yaml. Every item is answered against ALL
+# fields in that file, and against the project_constraints block at its top.
+
+topic: >-
+  Deep learning and machine learning methods for illegal lake encroachment
+  detection and predictive risk analysis using multi-temporal Sentinel-2
+  satellite imagery, Bengaluru lakes 2019-2025.
+
+format_reference: >-
+  C:\Users\moham\Documents\PROGRAMMING\satellite-prediction\docs\RESEARCH_DEEP_LEARNING.md
+
+time_range: >-
+  Post-2000. Prioritise 2020 onward for deep learning methods and 2023 onward
+  for foundation models. Foundational index work (Xu 2006 MNDWI) is in range
+  and should be cited where it is still the standard.
+
+decisions_already_taken:
+  geofencing_sense: >-
+    Legal buffer-zone analysis in the GIS sense. The GPS / IoT real-time
+    alerting sense is out of scope and is only to be ruled out in one line.
+  build_scope: >-
+    ONE deep learning model (the guide's requirement) plus a strong classical
+    baseline plus geo-fencing. Rank every item against that.
+  data_scope: >-
+    Expanding beyond the current 42 rows is IN scope and is treated as the
+    real blocker.
+
+# ---------------------------------------------------------------------------
+# 30 items in 14 deliberate groups. Items are grouped so that each agent
+# compares methods that are genuine alternatives to each other, rather than
+# researching three unrelated things.
+# ---------------------------------------------------------------------------
+items:
+
+  # ---- A. Deep learning, image-based. The guide's explicit requirement. ----
+  - id: A1
+    group: G1
+    name: U-Net semantic segmentation of Sentinel-2 patches
+    note: >-
+      Four classes: open water, water hyacinth / macrophyte, bare lake bed,
+      built-up. Trained on pixels, not on the 42 lake-years, so the effective
+      sample size question must be answered explicitly.
+
+  - id: A2
+    group: G1
+    name: DeepWaterMap and WatNet pretrained surface-water CNNs
+    note: >-
+      Purpose-built surface water segmentation networks with published weights
+      for Landsat and Sentinel-2. Check band requirements against the six bands
+      already cached (B02, B03, B04, B08, B11, SCL).
+
+  - id: A3
+    group: G1
+    name: Segment Anything Model (SAM / SAM2) zero-shot prompted segmentation
+    note: >-
+      Needs no training labels at all, which is the hardest constraint in this
+      project. Assess the over-segmentation failure mode on amorphous hyacinth
+      shorelines and whether point or box prompts per lake are workable.
+
+  - id: A4
+    group: G2
+    name: Siamese bi-temporal change detection, with weak temporal supervision
+    note: >-
+      2019 versus 2025 change map over the lake buffers. Must address the
+      resolution-gap trap: LEVIR-CD / WHU-CD / S2Looking checkpoints are
+      trained on 0.5-2 m imagery and do not transfer to 20 m. Include the 2026
+      weak-temporal-supervision approach that synthesises pseudo-pairs from
+      single-date data, since no labelled change mask exists.
+
+  - id: A5
+    group: G2
+    name: CNN patch classifier on shoreline patches
+    note: >-
+      The standard deep baseline any other deep method must beat. State the
+      label source honestly.
+
+  - id: A6
+    group: G3
+    name: Sentinel-2 geo-foundation model encoders used frozen
+    note: >-
+      SSL4EO-S12, Prithvi-EO-2.0, TerraMind v1.0, Clay, SatMAE. Also cover
+      knowledge distillation from a frozen teacher (RS-MTDF style, DINOv2 /
+      CLIP) into a small student, as the lighter alternative to fine-tuning.
+      Verify licences before recommending.
+
+  - id: A7
+    group: G3
+    name: Vision Transformer and Swin Transformer on Sentinel-2 patches
+    note: >-
+      Include few-shot semantic segmentation (learnable prototypes, inpainting
+      diffusion) as the current frontier, and say plainly whether it is
+      reachable by one student or belongs in "considered, with reasons".
+
+  - id: A8
+    group: G4
+    name: ConvLSTM, LSTM and MLP neural network sequence models
+    note: >-
+      Sequence models over the 7-date water rasters or the water-area series.
+      Include the 2024-25 Karela oxbow lake study (Lucknow, 1976-2024) that
+      used an MLP neural network on Indian wetland shrinkage, as the closest
+      domestic precedent at comparable sample size.
+
+  - id: A9
+    group: G4
+    name: Sentinel-2 20 m to 10 m super-resolution as preprocessing
+    note: >-
+      DSen2, VDSen2 and 2025 channel-attention variants. Sharpens B11 (SWIR,
+      the denominator of MNDWI) before masking. Matters most for the small
+      lakes: Sankey Tank is only 12.4 ha, roughly 310 pixels at 20 m.
+
+  # ---- B. Geo-fencing, legal buffer-zone sense. The guide's other ask. ----
+  - id: B1
+    group: G5
+    name: The legal buffer distance, and which one to test
+    note: >-
+      CRITICAL AND CONTESTED. The National Green Tribunal ordered 75 m for
+      lakes and 50/25 m for rajakaluves in 2015-16. The Supreme Court later
+      quashed the 75 m rule and reinstated the Bengaluru Master Plan's 30 m
+      buffer, prospective only. Establish the currently binding figure with
+      primary sources, and state what a capstone should test.
+
+  - id: B2
+    group: G5
+    name: Authoritative lake boundary sources versus the OpenStreetMap proxy
+    note: >-
+      Karnataka Tank Conservation and Development Authority, Survey of India
+      records, Bhuvan, National Wetland Atlas 2024 edition (1:12,500, published
+      March 2024), and the BBMP Lakes Monitoring System portal
+      (lms.bbmpgov.in). Assess accessibility, licence and whether a student can
+      actually obtain a legally meaningful boundary.
+
+  - id: B3
+    group: G6
+    name: Building intrusion detection inside the fence, multi-temporal
+    note: >-
+      Point-in-polygon and footprint-overlap counting of structures inside the
+      buffer, over time rather than in a single snapshot. This is the concrete
+      encroachment signal, as distinct from water loss.
+
+  - id: B4
+    group: G6
+    name: Per-ring zonal statistics with Getis-Ord Gi* hotspot analysis
+    note: >-
+      Converts a per-ring encroachment index into a statistically significant
+      claim. Cite the 2025 Chilika Lake (India) Sentinel-2 study that pairs
+      Gi* with multi-season NDWI / NDVI differencing, as the close
+      methodological analogue. Also rule the GPS / IoT geofencing sense in or
+      out in one line.
+
+  # ---- C. Classical machine learning and statistics. The honest competitor. ----
+  - id: C1
+    group: G7
+    name: Random Forest pixel classifier for water, vegetation and built-up
+    note: >-
+      The real classical baseline for the image side. Hundreds of thousands of
+      pixels, so sample size is not the constraint; label quality is.
+
+  - id: C2
+    group: G7
+    name: XGBoost with SHAP explanations on the lake-year table
+    note: >-
+      The guide-friendly tabular model. Be honest about whether 42 rows from 6
+      clusters can support it at all.
+
+  - id: C3
+    group: G7
+    name: Linear mixed-effects and hierarchical Bayesian panel models
+    note: >-
+      Random intercept per lake, slope on year. The statistically correct
+      treatment of 6 lakes measured 7 times each. Plain Random Forest or
+      XGBoost on 42 rows ignores the clustering and is pseudoreplication.
+      Assess whether this should be the headline baseline.
+
+  - id: C4
+    group: G8
+    name: Positive-unlabelled learning and autoencoder anomaly detection
+    note: >-
+      The correct frame when there are positives and unlabelled data but no
+      confirmed negatives. Include one-class classification for remote sensing
+      and PU learning on satellite image time series.
+
+  - id: C5
+    group: G8
+    name: Snorkel-style programmatic weak supervision
+    note: >-
+      Write independent labelling functions (MNDWI water loss, NDVI mask, OSM
+      building intrusion, GHSL built-up change, nighttime-light change) and
+      combine them with a generative label model into probabilistic
+      pseudo-labels. The concrete path from "zero labels" to "trainable".
+
+  - id: C6
+    group: G9
+    name: Discrete-time survival analysis and Cox proportional hazards
+    note: >-
+      Reframes the "Predictive Risk Analysis" half of the project title as
+      time-to-event: hazard of a lake crossing an encroachment threshold by
+      year t. Include Random Survival Forest and concordance-index-optimised
+      gradient boosting.
+
+  - id: C7
+    group: G9
+    name: Conformal prediction for distribution-free uncertainty
+    note: >-
+      A wrapper over any point-estimate model giving finite-sample coverage
+      guarantees, valid at n=42. Assess whether this is the single highest-value
+      addition for scientific honesty given zero ground truth.
+
+  - id: C8
+    group: G10
+    name: Otsu and adaptive MNDWI thresholding, plus sub-pixel water fraction
+    note: >-
+      The null baseline that everything must beat. Current project method is a
+      fixed MNDWI > 0 threshold. Compare adaptive Otsu thresholding, and
+      sub-pixel water-fraction regression (linear spectral mixture analysis) as
+      a continuous alternative to a hard mask at 20 m.
+
+  - id: C9
+    group: G10
+    name: Time-series break detection on the water-area series
+    note: >-
+      BFAST, Mann-Kendall trend test, Pettitt change-point test. Directly
+      relevant to separating a step change (drained, then refilled) from a
+      monotonic decline (progressive encroachment).
+
+  # ---- D. Data sources that would fix the four stated limitations. ----
+  - id: D1
+    group: G11
+    name: GOOGLE/Research/open-buildings-temporal/v1
+    note: >-
+      Annual building presence and height 2016-2023. Directly fixes stated
+      limitation 2 (OpenStreetMap is one snapshot). Check coverage over
+      Bengaluru and per-year reliability.
+
+  - id: D2
+    group: G11
+    name: JRC/GHSL/P2023A/GHS_BUILT_S and the wider Global Human Settlement Layer
+    note: >-
+      Multi-temporal built-up surface, height and volume, 1975-2030 at 5-year
+      epochs. The second fix for limitation 2. Note the 100 m resolution
+      against the project's 20 m grid and say what that permits and forbids.
+
+  - id: D3
+    group: G12
+    name: JRC Global Surface Water and its monthly history
+    note: >-
+      Water occurrence, change intensity, seasonality and recurrence,
+      1984-2021. An independent label and validation source that the project
+      did not produce itself, which partly addresses limitation 3.
+
+  - id: D4
+    group: G12
+    name: Annual land-cover products as an independent cross-check
+    note: >-
+      GOOGLE/DYNAMICWORLD/V1 near-real-time 10 m, ESA WorldCover, and ESRI
+      annual land cover 2020-2024. Triangulation against the project's own
+      MNDWI and NDVI masks.
+
+  - id: D5
+    group: G13
+    name: COPERNICUS/S1_GRD Sentinel-1 SAR water detection
+    note: >-
+      Radar sees through cloud, so it lifts the project from one usable scene
+      per year to many. Directly fixes limitation 4 (dry-season minimum only).
+      Assess the difficulty of SAR water extraction for a student.
+
+  - id: D6
+    group: G13
+    name: VIIRS annual nighttime lights as a time-varying pressure proxy
+    note: >-
+      NOAA/VIIRS/DNB/ANNUAL_V22 and the harmonized simulated 1992-2023 annual
+      dataset published in Nature Scientific Data (2024). A genuinely
+      year-varying urbanisation proxy, unlike the static OpenStreetMap counts.
+
+  - id: D7
+    group: G14
+    name: DEM and bathymetry for separating desilting from encroachment
+    note: >-
+      SRTM, CartoDEM and DEM-derived lake-bottom reconstruction. Excavation
+      changes depth and volume without permanent loss of surface footprint;
+      encroachment permanently removes footprint. Targets the Bellandur
+      15.7 -> 0.4 -> 107.9 ha confound directly. Assess whether 30 m DEM is
+      remotely adequate for this.
+
+  - id: D8
+    group: G14
+    name: Scaling from 6 lakes to all Bengaluru lakes
+    note: >-
+      Roughly 210 lakes are under BBMP. Establish the real count, an
+      authoritative boundary source for all of them, and the compute and
+      student-day cost of running the existing pipeline city-wide. This is the
+      only fix for limitation 1, which the project itself calls the main
+      blocker.
+
+# ---------------------------------------------------------------------------
+# Excluded on sight, recorded here so the final report can say "considered,
+# with reasons" without spending an agent on them.
+# ---------------------------------------------------------------------------
+excluded:
+  - name: GPS / IoT real-time geofence alerting
+    reason: >-
+      The guide's "geo-fencing" was confirmed to mean legal buffer-zone
+      analysis. The IoT sense needs a deployment and alerting layer, not
+      satellite analysis. One line in the report, covered under item B4.
+  - name: Mask R-CNN instance segmentation of individual buildings
+    reason: >-
+      Individual buildings are not resolvable at 20 m. Would require
+      sub-metre commercial imagery the project does not have.
+  - name: Fine-tuning a full foundation model end to end
+    reason: >-
+      Hundreds of millions of parameters against a handful of labelled
+      examples. Covered as frozen feature extraction under item A6 instead.
+
+execution:
+  batch_size: 5              # parallel agents per wave
+  items_per_agent: 3         # grouped by the `group` key, not arbitrarily
+  total_agents: 14
+  waves: 3
+  output_dir: ./research-dl-lake-encroachment/results
+  output_format: >-
+    One JSON file per group, named <group>.json, containing one object per
+    item with every field from fields.yaml as a key, plus an `uncertain` array
+    naming the fields the agent could not confirm against a primary source.
+  rules:
+    - Every numeric claim taken from a paper is marked [verify] unless the
+      agent confirmed it against the primary source itself.
+    - Answers are written against this project's constraints, not in the
+      abstract. An answer that would read the same for any project is a
+      failed answer.
+    - A null result, or "this will not work here", is a valid and valuable
+      answer. Do not inflate a method's prospects.
+    - Official dataset IDs are reproduced exactly and never paraphrased.
