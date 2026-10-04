@@ -1,16 +1,16 @@
 {
-  "mean_macro_f1": 0.7659375142484056,
+  "mean_macro_f1": 0.7855744025624642,
   "per_lake": {
-    "Bellandur Lake": 0.821,
-    "Varthur Lake": 0.764,
-    "Madiwala Lake": 0.7116,
-    "Hebbal Lake": 0.7858,
-    "Ulsoor Lake": 0.7924,
-    "Sankey Tank": 0.7209
+    "Bellandur Lake": 0.814,
+    "Varthur Lake": 0.7789,
+    "Madiwala Lake": 0.7568,
+    "Hebbal Lake": 0.84,
+    "Ulsoor Lake": 0.8103,
+    "Sankey Tank": 0.7134
   },
   "shuffle_control": false,
-  "rf_mean_macro_f1": 0.7701575320057031,
-  "delta_vs_rf": -0.004220017757297523,
+  "rf_mean_macro_f1": 0.7708769024396243,
+  "delta_vs_rf": 0.01469750012283999,
   "recommended": "random_forest",
-  "wilcoxon_p": 0.5625
+  "wilcoxon_p": 0.3125
 }

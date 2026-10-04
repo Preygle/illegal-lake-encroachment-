@@ -1,0 +1,126 @@
+[1/5] loading the lake-year table
+  source: features_lake_year_dl.csv (segmentation)   42 rows x 42 cols
+
+[2/5] water model: water_frac ~ year_c + rain_365d_z  + (1 | lake)
+         Mixed Linear Model Regression Results
+========================================================
+Model:            MixedLM Dependent Variable: water_frac
+No. Observations: 42      Method:             REML      
+No. Groups:       6       Scale:              0.0137    
+Min. group size:  7       Log-Likelihood:     11.2690   
+Max. group size:  7       Converged:          Yes       
+Mean group size:  7.0                                   
+--------------------------------------------------------
+              Coef.  Std.Err.   z    P>|z| [0.025 0.975]
+--------------------------------------------------------
+Intercept      0.558    0.155  3.593 0.000  0.254  0.862
+year_c         0.017    0.010  1.722 0.085 -0.002  0.036
+rain_365d_z   -0.011    0.019 -0.567 0.570 -0.049  0.027
+Group Var      0.143    0.836                           
+========================================================
+
+  between-lake variance 0.14271   residual variance 0.01375   ratio 10.4x
+  Estimated from 6 clusters, below the 15-50 usually cited as a minimum - imprecise
+  by construction, and reported as such.
+
+  jackknife+ by lake (alpha=0.1)
+  median interval width 1.3040   (target 'water_frac')
+  out-of-sample marginal coverage 100.0% over 42 rows, each covered by intervals built without its lake
+  nominal 90%; jackknife+ worst-case guarantee 80%
+  per lake (descriptive only, not a claimable guarantee): Bellandur 100%, Hebbal 100%, Madiwala 100%, Sankey 100%, Ulsoor 100%, Varthur 100%
+  These intervals cover the project's OWN segmentation-derived water fraction, not true encroachment.
+
+[3/5] building model on GOOGLE/Research/open-buildings-temporal/v1
+  buildings inside the fence, first vs last year, and yearly growth
+          lake  fence_m  first_year  last_year  buildings_first  buildings_last  growth_pct_per_year
+Bellandur Lake       30        2016       2023             26.6            14.2                 -5.1
+   Hebbal Lake       30        2016       2023              5.4             9.0                  2.3
+ Madiwala Lake       30        2016       2023             54.4            78.8                  3.8
+   Sankey Tank       30        2016       2023             14.4            24.9                  5.9
+   Ulsoor Lake       30        2016       2023             33.4            45.0                  6.3
+  Varthur Lake       30        2016       2023             10.1             5.2                -10.8
+Bellandur Lake       75        2016       2023            245.8           288.7                  2.3
+   Hebbal Lake       75        2016       2023             19.4            36.7                  9.1
+ Madiwala Lake       75        2016       2023            700.2          1052.8                  5.6
+   Sankey Tank       75        2016       2023            141.9           208.8                  4.9
+   Ulsoor Lake       75        2016       2023            223.0           318.7                  5.4
+  Varthur Lake       75        2016       2023             62.6           103.5                  5.3
+
+  mixed model: log_bldg_75m ~ year_c  + (1 | lake)   (48 lake-years, 2016-2023)
+          Mixed Linear Model Regression Results
+==========================================================
+Model:            MixedLM Dependent Variable: log_bldg_75m
+No. Observations: 48      Method:             REML        
+No. Groups:       6       Scale:              0.0099      
+Min. group size:  8       Log-Likelihood:     18.6120     
+Max. group size:  8       Converged:          Yes         
+Mean group size:  8.0                                     
+-----------------------------------------------------------
+             Coef.  Std.Err.    z     P>|z|  [0.025  0.975]
+-----------------------------------------------------------
+Intercept    5.090     0.477  10.674  0.000   4.155   6.025
+year_c       0.053     0.006   8.426  0.000   0.041   0.065
+Group Var    1.363     9.175                               
+==========================================================
+
+  average growth of buildings inside the 75 m fence: +5.4% per year (95% CI +4.1% to +6.7%)
+
+  jackknife+ by lake (alpha=0.1), on log(1 + count)
+  median interval width 5.2775   (target 'log_bldg_75m')
+  out-of-sample marginal coverage 83.3% over 48 rows, each covered by intervals built without its lake
+  nominal 90%; jackknife+ worst-case guarantee 80%
+  per lake (descriptive only, not a claimable guarantee): Bellandur 100%, Hebbal 0%, Madiwala 100%, Sankey 100%, Ulsoor 100%, Varthur 100%
+  These intervals cover the project's OWN Open Buildings count (itself a model output), not true encroachment.
+
+[4/5] desilting rule
+  Bellandur Lake
+    2019->2020  water -0.048 veg +0.007 bare +0.041 built +0.000   no material water loss
+    2020->2021  water -0.083 veg -0.429 bare +0.401 built +0.111   drained (bed bare, water returns) - check desilting records
+    2021->2022  water +0.067 veg +0.177 bare -0.149 built -0.094   no material water loss
+    2022->2023  water +0.035 veg -0.244 bare +0.198 built +0.011   no material water loss
+    2023->2024  water +0.030 veg -0.090 bare +0.086 built -0.025   no material water loss
+    2024->2025  water +0.083 veg +0.486 bare -0.567 built -0.003   no material water loss
+  Varthur Lake
+    2019->2020  water -0.050 veg -0.054 bare +0.104 built -0.000   no material water loss
+    2020->2021  water -0.059 veg -0.804 bare +0.863 built +0.000   drained (bed bare, water returns) - check desilting records
+    2021->2022  water +0.024 veg +0.597 bare -0.627 built +0.006   no material water loss
+    2022->2023  water -0.024 veg -0.298 bare +0.328 built -0.006   no material water loss
+    2023->2024  water +0.063 veg +0.279 bare -0.342 built +0.000   no material water loss
+    2024->2025  water +0.116 veg +0.133 bare -0.250 built +0.001   no material water loss
+  Madiwala Lake
+    2019->2020  water -0.658 veg +0.804 bare -0.141 built -0.005   hyacinth spread, not lake loss
+    2020->2021  water +0.689 veg -0.733 bare +0.043 built +0.000   no material water loss
+    2021->2022  water -0.082 veg +0.119 bare -0.038 built +0.001   hyacinth spread, not lake loss
+    2022->2023  water -0.199 veg +0.211 bare -0.012 built -0.001   hyacinth spread, not lake loss
+    2023->2024  water +0.309 veg -0.389 bare +0.080 built +0.000   no material water loss
+    2024->2025  water -0.312 veg +0.387 bare -0.076 built +0.000   hyacinth spread, not lake loss
+  Hebbal Lake
+    2019->2020  water -0.185 veg +0.305 bare -0.121 built +0.000   hyacinth spread, not lake loss
+    2020->2021  water +0.195 veg -0.240 bare +0.046 built +0.000   no material water loss
+    2021->2022  water +0.040 veg -0.002 bare -0.038 built +0.000   no material water loss
+    2022->2023  water +0.002 veg +0.004 bare -0.006 built +0.000   no material water loss
+    2023->2024  water +0.027 veg -0.029 bare +0.002 built +0.000   no material water loss
+    2024->2025  water -0.012 veg +0.019 bare -0.007 built +0.000   no material water loss
+  Ulsoor Lake
+    2019->2020  water +0.094 veg +0.028 bare -0.123 built +0.000   no material water loss
+    2020->2021  water +0.065 veg -0.078 bare +0.013 built +0.000   no material water loss
+    2021->2022  water +0.000 veg -0.011 bare +0.012 built +0.000   no material water loss
+    2022->2023  water -0.020 veg +0.033 bare -0.013 built +0.000   no material water loss
+    2023->2024  water -0.009 veg -0.033 bare +0.042 built +0.000   no material water loss
+    2024->2025  water +0.014 veg -0.035 bare +0.021 built +0.000   no material water loss
+  Sankey Tank
+    2019->2020  water +0.016 veg +0.035 bare -0.052 built +0.000   no material water loss
+    2020->2021  water +0.026 veg -0.019 bare -0.006 built +0.000   no material water loss
+    2021->2022  water +0.000 veg -0.016 bare +0.016 built +0.000   no material water loss
+    2022->2023  water +0.000 veg +0.000 bare +0.000 built +0.000   no material water loss
+    2023->2024  water -0.006 veg -0.006 bare +0.013 built +0.000   no material water loss
+    2024->2025  water +0.003 veg +0.029 bare -0.032 built +0.000   no material water loss
+
+[5/5] the XGBoost leakage exhibit
+  15 of 30 numeric features are constant within a lake, i.e. they encode lake identity:
+    ring_30m_px, ring_75m_px, bldg_in_30m, ring_30m_ha, bldg_in_75m, ring_75m_ha, bldg_inside_footprint, footprint_ha, footprint_acres, on_grid_ha, on_grid_frac, ref_ha ...
+  XGBoost in-sample R2            +1.000
+  XGBoost leave-one-lake-out R2   +0.302
+  That gap is the memorisation. This is the figure to put in the report, not a SHAP plot.
+
+  -> C:\Users\moham\Documents\PROGRAMMING\Predictive_DA\outputs\dl\risk

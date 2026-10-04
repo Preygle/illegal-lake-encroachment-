@@ -1,7 +1,7 @@
 lake,bldg_in_30m,ring_30m_ha,bldg_in_75m,ring_75m_ha,bldg_inside_footprint,footprint_ha,footprint_acres,ktcda_tier_30m,on_grid_ha,on_grid_frac
-Bellandur Lake,2,37.93,66,91.4,0,315.83,780.4,True,315.44,0.999
+Bellandur Lake,2,38.39,66,91.86,0,315.36,779.3,True,315.08,0.999
 Varthur Lake,1,24.6,17,58.45,0,154.32,381.3,True,153.96,0.998
 Hebbal Lake,0,12.99,7,30.22,0,45.34,112.0,True,45.44,1.002
-Madiwala Lake,11,18.14,229,41.66,0,82.84,204.7,True,54.88,0.662
+Madiwala Lake,11,18.14,290,41.66,0,82.84,204.7,True,82.92,1.001
 Ulsoor Lake,8,11.19,75,26.05,0,37.87,93.6,False,38.12,1.007
 Sankey Tank,5,6.04,63,15.72,4,12.48,30.8,False,12.4,0.994

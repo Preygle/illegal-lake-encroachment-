@@ -1,12 +1,12 @@
 {
-  "mean_macro_f1": 0.37262197058387136,
+  "mean_macro_f1": 0.3892822911689667,
   "per_lake": {
-    "Bellandur Lake": 0.3318,
-    "Varthur Lake": 0.3915,
-    "Madiwala Lake": 0.2145,
-    "Hebbal Lake": 0.3961,
-    "Ulsoor Lake": 0.5163,
-    "Sankey Tank": 0.3856
+    "Bellandur Lake": 0.2846,
+    "Varthur Lake": 0.4248,
+    "Madiwala Lake": 0.3071,
+    "Hebbal Lake": 0.4105,
+    "Ulsoor Lake": 0.4398,
+    "Sankey Tank": 0.4689
   },
   "shuffle_control": true
 }

@@ -1,0 +1,22 @@
+*** Earth Engine *** Share your feedback by taking our Annual Developer Satisfaction Survey: https://google.qualtrics.com/jfe/form/SV_9oS0DRcPvElRMNw?source=python
+
+[2/3] GOOGLE/DYNAMICWORLD/V1 on the seven scene dates
+  2019 2019-03-30  20190330T050659_20190330T052334_T43PGQ
+  2020 2020-03-29  20200329T050651_20200329T051221_T43PGQ
+  2021 2021-03-14  20210314T050651_20210314T051944_T43PGQ
+  2022 2022-03-04  20220304T050709_20220304T051945_T43PGQ
+  2023 2023-04-13  20230413T050651_20230413T052406_T43PGQ
+  2024 2024-03-13  20240313T050649_20240313T052012_T43PGQ
+  2025 2025-02-06  20250206T050909_20250206T052454_T43PGQ
+
+  agreement with Dynamic World inside each footprint (all 7 years)
+                agreement  dw_flooded  flooded_of_our_veg
+lake                                                     
+Bellandur Lake      0.724       0.052               0.067
+Varthur Lake        0.660       0.043               0.049
+Madiwala Lake       0.879       0.062               0.130
+Hebbal Lake         0.938       0.013               0.081
+Ulsoor Lake         0.846       0.002               0.020
+Sankey Tank         0.916       0.000               0.000
+
+  -> C:\Users\moham\Documents\PROGRAMMING\Predictive_DA\outputs\dl\gee
