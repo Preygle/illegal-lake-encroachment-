@@ -43,10 +43,21 @@ for d in (S2DIR, GIBSDIR, PROC):
     d.mkdir(parents=True, exist_ok=True)
 
 STAC = "https://earth-search.aws.element84.com/v1/search"
-AOI = (77.555, 12.905, 77.755, 13.055)          # lon_min, lat_min, lon_max, lat_max
+# lat_min was 12.905 until September 2026, which left 34% of Madiwala Lake
+# (one of its two polygon parts entirely) below the grid. 12.890 covers every
+# lake plus its 500 m collar. The grid's top-left corner is unchanged, so the
+# existing pixels of the other five lakes keep exactly the same positions; the
+# grid only gains rows to the south and one column to the east.
+AOI = (77.555, 12.890, 77.755, 13.055)          # lon_min, lat_min, lon_max, lat_max
 YEARS = list(range(2019, 2026))
 TARGET_RES = 20.0                                # metres
-BANDS = ["blue", "green", "red", "nir", "swir16", "scl"]
+# swir22 (B12) is not used by the four-class segmentation model, which reads
+# blue/green/red/nir/swir16 plus the three indices. It is listed so that a future
+# re-fetch picks it up: the pretrained surface-water networks (DeepWaterMap,
+# WatNet) and several Sentinel-2 foundation encoders require B12 and cannot run
+# without it. Existing caches stay valid - fetch_year() only re-downloads when
+# the cached schema is stale, so nothing is re-fetched until that happens.
+BANDS = ["blue", "green", "red", "nir", "swir16", "swir22", "scl"]
 
 GDAL_ENV = dict(AWS_NO_SIGN_REQUEST="YES",
                 GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR",
@@ -238,10 +249,11 @@ def fetch_year(row, bounds, shape) -> tuple[int, dict] | None:
     out = S2DIR / f"s2_{int(row.year)}.npz"
     if out.exists():
         with np.load(out) as z:
-            if "green" in z and z["green"].dtype == np.uint16:     # current schema
+            if ("green" in z and z["green"].dtype == np.uint16    # current schema
+                    and z["green"].shape == tuple(shape)):         # current grid
                 print(f"  {int(row.year)}  cached")
                 return int(row.year), {k: z[k] for k in z.files}
-        print(f"  {int(row.year)}  stale cache (old schema) - refetching")
+        print(f"  {int(row.year)}  stale cache (old schema or grid) - refetching")
 
     t0 = time.time()
     arrays = {}

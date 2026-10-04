@@ -359,8 +359,9 @@ inside the same area.</li>
 <li><b>Download the satellite image.</b> For each year, search for a dry season image
 with less than 1% cloud and download only the 6 bands I need.</li>
 <li><b>Convert to reflectance.</b> The downloaded values are integers, not real values.
-The formula is <code>reflectance = DN × 0.0001 − 0.1</code>. This minus 0.1 part is
-important, I will explain in section 4.3.</li>
+The formula is <code>reflectance = DN × 0.0001</code>. Whether an extra −0.1 belongs in
+this formula is the single most important detail in the whole project, and I explain it
+in section 4.3.</li>
 <li><b>Calculate MNDWI</b> for every pixel using
 <code>MNDWI = (Green − SWIR) / (Green + SWIR)</code>. Water gives a positive value
 because water absorbs SWIR light. Land and buildings give negative value.</li>
@@ -395,12 +396,24 @@ useful here because encroachment cases are very few compared to normal cases.</l
 <h3>4.3 Three problems I found and how I am handling them</h3>
 
 <div class="box warn">
-<p><b>Problem 1 — the minus 0.1 offset.</b> In the beginning my code was showing almost
-zero water in Bellandur lake, which was clearly wrong. After checking the metadata I
-found that new Sentinel-2 data has an offset of −0.1 which I was not applying. Because
-of this MNDWI was coming as +0.14 instead of +0.78 and most water pixels were failing
-the test. After fixing the formula the water came correctly. So this small thing changes
-the whole answer.</p>
+<p><b>Problem 1 — the minus 0.1 offset, applied twice.</b> Sentinel-2 data from 2022
+onwards stores reflectance with a −0.1 offset, and the band metadata of every scene says
+to apply it. So I applied it. But the scenes also carry a property called
+<code>earthsearch:boa_offset_applied: true</code>, which means the provider had already
+subtracted that offset before giving me the file. I was subtracting it a second time.</p>
+<p>The effect was severe and easy to miss. Over water, the raw values are small, so
+subtracting 0.1 twice made the reflectance negative. A formula like
+<code>(Green − SWIR) / (Green + SWIR)</code> flips sign when both bands are negative, so
+open water was reading as NDVI ≈ +0.9, which means "dense vegetation". My water test
+<code>MNDWI &gt; 0</code> was finding only 4&ndash;16% of the pixels that the satellite's
+own classification layer calls water. After removing the double offset it finds
+82&ndash;96%. Sankey Tank, which is a small clean full tank, had been reported as about
+1 hectare of water out of 12.4.</p>
+<p>How I confirmed it: the raw values over water pixels are 50&ndash;1200, so applying
+the offset would make the median water pixel have negative reflectance, which is
+physically impossible. I also checked the metadata of the 2019, 2021, 2023 and 2025
+scenes directly, and all four say the offset is already applied. Lesson: metadata can
+contradict itself, and a physical sanity check on the actual numbers settles it.</p>
 </div>
 
 <div class="box warn">

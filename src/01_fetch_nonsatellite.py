@@ -32,8 +32,13 @@ OVERPASS = "https://overpass-api.de/api/interpreter"
 lakes = pd.read_csv(PROC / "lakes.csv")
 cities = pd.read_csv(PROC / "study_area.csv")      # Bengaluru only
 
-# Bengaluru lake-belt bounding box (covers all six study lakes)
-BBOX = (12.905, 77.555, 13.055, 77.755)  # S, W, N, E  (Overpass order)
+# Bengaluru lake-belt bounding box (covers all six study lakes).
+# The southern edge was 12.905 until September 2026, which cut off Madiwala
+# Lake's southern lobe and the south side of its 500 m collar: 34% of the lake
+# and every building south of it were outside the box. 12.890 covers the lake
+# and collar with ~370 m to spare. Keep in step with AOI in 02 and 04.
+BBOX = (12.890, 77.555, 13.055, 77.755)  # S, W, N, E  (Overpass order)
+BBOX_META = RAW / "osm_bbox.json"
 
 
 # ==========================================================================
@@ -57,6 +62,26 @@ def overpass(query: str, cache: Path, tries: int = 3) -> dict:
         print(f"    retry {i+1}/{tries} after {last}; sleeping {wait}s")
         time.sleep(wait)
     raise RuntimeError(f"Overpass failed: {last}")
+
+
+def _invalidate_if_bbox_changed(names) -> None:
+    """
+    Drop cached Overpass dumps fetched for a different box.
+
+    The cache used to be keyed on file existence alone, so widening BBOX would
+    have silently reused the old, narrower data. The box each dump was fetched
+    with is now recorded, and a mismatch forces a refetch - together with the
+    point caches that 04_eda_nonsatellite.py derives from these files.
+    """
+    old = json.loads(BBOX_META.read_text()) if BBOX_META.exists() else None
+    if old == list(BBOX):
+        return
+    for name in names:
+        for f in (RAW / f"{name}.json", PROC / f"{name}_pts.npy",
+                  PROC / f"{name.replace('osm_buildings', 'osm_building')}_pts.npy"):
+            if f.exists():
+                f.unlink()
+    print(f"  bounding box changed {old} -> {list(BBOX)}: refetching")
 
 
 def fetch_osm() -> None:
@@ -84,6 +109,7 @@ def fetch_osm() -> None:
             out geom;""",
     }
 
+    _invalidate_if_bbox_changed(jobs)
     for name, q in jobs.items():
         cache = RAW / f"{name}.json"
         t0 = time.time()
@@ -93,6 +119,8 @@ def fetch_osm() -> None:
                   f"({time.time()-t0:5.1f}s){'  [cached]' if time.time()-t0 < 0.5 else ''}")
         except Exception as e:                                    # noqa: BLE001
             print(f"  {name:16s} FAILED: {e}")
+    if all((RAW / f"{n}.json").exists() for n in jobs):
+        BBOX_META.write_text(json.dumps(list(BBOX)))
 
 
 # ==========================================================================

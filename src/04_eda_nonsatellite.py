@@ -31,7 +31,7 @@ TAB = ROOT / "outputs" / "tables"
 for d in (FIG, TAB):
     d.mkdir(parents=True, exist_ok=True)
 
-AOI = (77.555, 12.905, 77.755, 13.055)
+AOI = (77.555, 12.890, 77.755, 13.055)   # keep in step with 01 / 02
 MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
@@ -53,9 +53,10 @@ LATLON_RE = re.compile(r'"lat":\s*(-?[\d.]+),\s*"lon":\s*(-?[\d.]+)')
 
 def building_points() -> np.ndarray:
     cache = PROC / "osm_building_pts.npy"
-    if cache.exists():
+    src = RAW / "osm_buildings.json"
+    if cache.exists() and cache.stat().st_mtime >= src.stat().st_mtime:
         return np.load(cache)
-    txt = (RAW / "osm_buildings.json").read_text(encoding="utf-8")
+    txt = src.read_text(encoding="utf-8")
     pts = np.array([(float(lo), float(la))
                     for la, lo in CENTER_RE.findall(txt)], dtype="float32")
     np.save(cache, pts)
@@ -65,9 +66,10 @@ def building_points() -> np.ndarray:
 def way_vertices(name: str) -> np.ndarray:
     """All vertices of a `out geom` layer, as (lon, lat)."""
     cache = PROC / f"osm_{name}_pts.npy"
-    if cache.exists():
+    src = RAW / f"osm_{name}.json"
+    if cache.exists() and cache.stat().st_mtime >= src.stat().st_mtime:
         return np.load(cache)
-    txt = (RAW / f"osm_{name}.json").read_text(encoding="utf-8")
+    txt = src.read_text(encoding="utf-8")
     pts = np.array([(float(lo), float(la))
                     for la, lo in LATLON_RE.findall(txt)], dtype="float32")
     np.save(cache, pts)
