@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Partial downloads written by dl/gee.py before an atomic rename
+*.part
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Note on data and outputs: data/ and outputs/ ARE tracked on purpose, so the
+# project is reproducible without re-downloading ~200 MB. Everything under them
+# is regenerable by running src/01 .. src/17 in order - see README.
+
+# The raw Overpass building dump is 122 MB and is NOT read by the pipeline at
+# run time - src/04 parses it once into data/processed/osm_building_pts.npy
+# (3.5 MB, tracked), and everything downstream uses that. It is excluded because
+# a 122 MB Git LFS object could not be uploaded over this connection, and
+# `python src/01_fetch_nonsatellite.py` re-downloads it in ~5 minutes.
+data/raw/osm_buildings.json

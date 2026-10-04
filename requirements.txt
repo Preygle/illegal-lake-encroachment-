@@ -1,0 +1,11 @@
+# Base pipeline (src/00 .. src/10): data download, EDA, reports.
+# The modelling stack is separate - see requirements-dl.txt
+pandas>=2.0
+numpy>=1.24
+matplotlib>=3.7
+rasterio>=1.3
+shapely>=2.0
+pyproj>=3.5
+requests>=2.31
+pillow>=10.0
+scipy>=1.10
