@@ -12,6 +12,7 @@ scikit-learn>=1.3     # Random Forest baseline, metrics
 statsmodels>=0.14     # MixedLM - the mixed-effects risk model
 geopandas>=0.14       # geo-fence geometry
 xgboost>=2.0          # ONLY for the leakage exhibit in 16_risk_model.py
+opencv-python>=4.8   # anylake/enhance.py: bilateral filter, CLAHE, unsharp mask
 pymannkendall>=1.4    # optional: indicative trend tests on the water series
 earthengine-api>=1.0  # 17_fetch_gee.py: Open Buildings Temporal, Dynamic World,
                       # JRC Global Surface Water. Auth once with

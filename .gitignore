@@ -23,3 +23,10 @@ Thumbs.db
 # a 122 MB Git LFS object could not be uploaded over this connection, and
 # `python src/01_fetch_nonsatellite.py` re-downloads it in ~5 minutes.
 data/raw/osm_buildings.json
+
+# Any-lake pipeline (src/anylake, src/19, src/20): per-lake imagery caches and
+# per-lake results are regenerated on demand, so they are not tracked. The
+# trained models and the enhancement experiment are kept.
+data/lakes/
+outputs/anylake/*/
+!outputs/anylake/models/

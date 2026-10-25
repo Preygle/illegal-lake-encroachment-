@@ -87,6 +87,101 @@ Presentation figures (`python src/18_demo_figures.py` →
 
 ---
 
+## Any lake in India
+
+The second dashboard page and `src/20_any_lake.py` run the whole method on **any
+lake in India that OpenStreetMap has an outline for**, not just the six study
+lakes.
+
+**Final dashboard:** double-click `run_final_dashboard.bat` (it runs
+`dashboard/final_app.py`). Search or pick a lake and press Run. The analysis
+runs as a background process with a live stage list, timings, a log and a Stop
+button, so refreshing or closing the tab does not stop it. Results appear in
+seven tabs: Overview, Land cover & growth, Future encroachment, Image
+enhancement, Image → vector, Model & accuracy, and Method & data. The maps are
+interactive, on a satellite base map, with the vector polygons as clickable
+overlays. A demo recording of three lakes is in
+`outputs/demo/anylake_demo_3_lakes.mp4`.
+
+```bash
+python src/19_anylake_library.py          # once: library + enhancement experiment (~35 min CPU)
+python src/21_anylake_metrics.py          # training / validation / test accuracy table
+python src/20_any_lake.py "Hussain Sagar" # or use the dashboard's "Any lake in India" page
+python src/20_any_lake.py "17.4239, 78.4738"
+```
+
+| Step | What happens |
+|---|---|
+| Search | Nominatim (the OpenStreetMap geocoder, restricted to India) finds the lake and returns its outline; a typed `lat, lon` finds the water body at that point. |
+| Dataset | **Earth Search `sentinel-2-l2a`**: ESA Copernicus Sentinel-2 Level-2A surface reflectance, one clear January–April scene per year from 2019 to 2025, ranked by cloud over the lake itself. **All 12 bands** (B01–B12 including B8A) plus the Scene Classification Layer, warped onto a 20 m UTM grid around the lake. OpenStreetMap buildings and roads come from Overpass. |
+| Image enhancement | Every band goes through denoising (bilateral filter), contrast enhancement (CLAHE) and sharpening (unsharp mask). Before/after images are shown with contrast, entropy, sharpness and noise measured on each. |
+| U-Net, twice | The project's U-Net with 16 input channels (12 bands, plus NDWI, MNDWI, NDVI and NDBI) is trained on the six Bengaluru lakes **once on raw bands and once on enhanced bands**, and both versions map the searched lake. That lake was never in training, so the score against its seed labels is an out-of-lake score. |
+| Image → vector | Each pixel becomes a feature vector: 12 bands, 4 indices and 4 texture values (downloadable as CSV, and shown as spectral signatures). The class maps are traced into GeoJSON polygons (water, built-up, growth). |
+| Geo-fence | The same 30 m / 75 m rings as the main pipeline: OpenStreetMap buildings counted inside each ring, built-up hectares per ring per year, and persistent growth. |
+| Forecast | A Random Forest on the pixel vectors (plus distance to built-up, to the shoreline and to roads, and fence flags). It learns which pixels became built-up within 3 years, and stayed built-up, over 2020→23 and 2021→24, and is tested on 2022→25, a period it has not seen. It then projects 2025→2028. |
+| Vector → image | The predicted-encroachment polygons are rasterised back onto the 2025 satellite image, with the lake outline and both fence rings, and saved as a PNG and a georeferenced GeoTIFF. |
+
+**The enhancement experiment.** Two U-Nets are trained, identical except for the
+input, with the same nested leave-one-lake-out folds as the main model. The rule
+was fixed before the run: enhancement is used downstream only if it raises mean
+macro-F1 by at least 0.01. Results are in `outputs/anylake/enhancement_experiment.json`.
+
+| Held-out lake | Raw bands | Enhanced bands |
+|---|---|---|
+| Bellandur | 0.815 | 0.610 |
+| Varthur | 0.760 | 0.729 |
+| Madiwala | 0.759 | 0.704 |
+| Hebbal | 0.827 | 0.761 |
+| Ulsoor | 0.787 | 0.744 |
+| Sankey Tank | 0.715 | 0.660 |
+| **Mean macro-F1** | **0.777** | **0.701** |
+
+Enhancement made the U-Net **worse on all six lakes** (−0.076 mean macro-F1,
+Wilcoxon p = 0.031), so the pipeline uses raw bands. The enhanced pictures do
+look clearer: contrast, entropy and sharpness all go up. But CLAHE stretches
+every 1.28 km tile on its own histogram, so the same surface gets different
+values in different tiles and years. That breaks the spectral relationships
+the model and the indices depend on. Enhancement suits human viewing, not this
+model's input. The raw 16-channel model (0.777) matches the original 8-channel
+U-Net (0.786), so the extra bands neither help nor hurt much.
+
+Training vs validation vs test (`python src/21_anylake_metrics.py`, scored
+against the seed labels, all years):
+
+| Raw-band U-Net | Accuracy | Macro-F1 | Kappa | F1 water | F1 veg | F1 bare | F1 built |
+|---|---|---|---|---|---|---|---|
+| Train (5 lakes it learned from) | 0.839 | 0.844 | 0.766 | 0.921 | 0.947 | 0.818 | 0.693 |
+| Validation (Varthur, early stopping only) | 0.872 | 0.794 | 0.776 | 0.828 | 0.955 | 0.888 | 0.503 |
+| Test (leave-one-lake-out, mean of 6) | 0.798 | 0.777 | 0.702 | 0.844 | 0.935 | 0.722 | 0.607 |
+
+The train-to-test drop is 0.067 macro-F1, so the model generalises reasonably
+from lake to lake. Built-up is the weakest class everywhere, because its labels
+are OpenStreetMap building points, not footprints.
+
+Lakes outside Bengaluru, mapped by the model trained on all six:
+
+| Lake | Out-of-lake macro-F1 (raw / enhanced) | Forecast test ROC-AUC, 2022→25 | Notes |
+|---|---|---|---|
+| Hussain Sagar, Hyderabad | 0.703 / 0.624 | 0.94 | works |
+| Ambattur Lake, Chennai | 0.617 / 0.568 | – | built-up F1 only 0.14, and the 2025 scene is misread as almost no built-up; the page flags both automatically |
+
+The page runs two reliability checks on every lake and shows a warning when
+either fails: built-up F1 below 0.30, or the last year's built-up area below a
+quarter of the earlier years' median.
+
+**Limitations specific to this page.**
+- The models learned from six Bengaluru lakes. A lake in a different climate or
+  landscape is a change of region (domain shift), so treat its maps as
+  indicative and check the out-of-lake score shown for it.
+- The built-up seed labels are OpenStreetMap building centroids. Coverage is
+  thin in many rural parts of India, so the built-up score there says little.
+- The forecast extends the 2019–2025 pattern. It is an estimate of where
+  built-up land is likely to appear, not a record of construction, and not a
+  legal finding.
+- Lakes larger than 30 km across are analysed in a centred 30 km window.
+
+---
+
 ## Pipeline
 
 Nine scripts, run in order. Each needs the previous one's output. Everything is
@@ -517,6 +612,11 @@ python src/05_eda_satellite.py
 python src/08_build_dashboard.py
 python src/09_simple_eda.py
 python src/10_build_simple_report.py
+
+# any lake in India
+python src/19_anylake_library.py         # library + enhancement experiment (~1 h CPU)
+python src/20_any_lake.py "Hussain Sagar"
+run_dashboard.bat                        # the two-page dashboard
 ```
 
 Add `--device cuda` to stage 14 for a GPU. Everything else is processor-bound.
@@ -544,6 +644,26 @@ src/
   17_fetch_gee.py           Open Buildings Temporal, Dynamic World, JRC GSW
   18_demo_figures.py        presentation figures M01-M04
   demo.py                   live demo: map any lake-year in seconds
+  19_anylake_library.py     any-lake model library + raw-vs-enhanced U-Net experiment
+  20_any_lake.py            any-lake pipeline from the command line
+  21_anylake_metrics.py     training / validation / test accuracy of the any-lake U-Nets
+  anylake/
+    search.py               lake search (Nominatim / Overpass)
+    fetch.py                Sentinel-2, all 12 bands, on a per-lake grid
+    lake.py                 per-lake geometry, fence rings, channels, seed labels
+    enhance.py              denoise -> CLAHE -> sharpen, image-quality measures
+    unet_lib.py             the U-Net across lakes with different grids
+    vectorize.py            image -> vector (pixel features, GeoJSON polygons)
+    geofence.py             30 m / 75 m fence for any lake
+    forecast.py             Random Forest encroachment forecast (+3 years)
+    render.py               vector -> image, map pictures, GeoTIFF
+    pipeline.py             all steps for one lake, timed
+    run.py, status.py       background run + live status file for the dashboard
+dashboard/
+  final_app.py              the final dashboard (run_final_dashboard.bat)
+  app.py                    two-page Streamlit app (run_dashboard.bat)
+  bengaluru.py              page 1: the six study lakes
+  any_lake.py               page 2: any lake in India
   dl/
     common.py               grid, lake geometry, folds, channels
     labels.py               seed-label construction

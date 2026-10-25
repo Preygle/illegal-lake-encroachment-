@@ -1,0 +1,33 @@
+{
+  "per_lake_macro_f1": {
+    "enh": {
+      "Bellandur Lake": 0.6102,
+      "Hebbal Lake": 0.761,
+      "Madiwala Lake": 0.7039,
+      "Sankey Tank": 0.6595,
+      "Ulsoor Lake": 0.7437,
+      "Varthur Lake": 0.7292
+    },
+    "raw": {
+      "Bellandur Lake": 0.8151,
+      "Hebbal Lake": 0.827,
+      "Madiwala Lake": 0.7585,
+      "Sankey Tank": 0.7149,
+      "Ulsoor Lake": 0.7873,
+      "Varthur Lake": 0.7596
+    }
+  },
+  "mean_macro_f1": {
+    "enh": 0.7012,
+    "raw": 0.7771
+  },
+  "mean_kappa": {
+    "enh": 0.5668,
+    "raw": 0.7015
+  },
+  "rule": "enhanced is used only if it beats raw by >= 0.01 mean macro-F1",
+  "gain_enh_minus_raw": -0.0758,
+  "lakes_improved": 0,
+  "wilcoxon_p": 0.0312,
+  "chosen": "raw"
+}
